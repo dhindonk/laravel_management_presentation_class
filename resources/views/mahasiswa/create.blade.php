@@ -1,10 +1,33 @@
 @extends('layouts.app')
+{{-- isi yield style --}}
+@section('style')
+    <style>
+        .text-gradient {
+            color: white !important;
+        }
+    </style>
+@endsection
 
 @section('content')
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center">Buat Pengajuan</h1>
+    <!-- Pastikan library GSAP sudah dimuat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-        <form id="submissionForm" class="p-4 bg-light border rounded col-md-8 mx-auto" action="{{ route('mahasiswa.store') }}"
+    <div class="container mt-5">
+        <div class="title-container text-center mb-5">
+            <h1 class="title-animation">
+                <span class="line-wrapper">
+                    <span class="line text-gradient">Buat</span>
+                </span>
+                <span class="line-wrapper">
+                    <span class="line text-gradient">Pengajuan</span>
+                </span>
+            </h1>
+            <div class="title-underline"></div>
+        </div>
+
+        {{-- rounded 10px --}}
+        <form id="submissionForm" style="border-radius: 15px !important" class="p-4 bg-light border rounded col-md-8 mx-auto" action="{{ route('mahasiswa.store') }}"
             method="POST">
             @csrf
             <!-- Judul Proyek -->
@@ -90,7 +113,9 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" id="submitBtn" class="btn btn-primary w-100" disabled>Submit</button>
+            <button type="submit" id="submitBtn" class="btn w-100 position-relative overflow-hidden submit-btn" disabled>
+                <span class="submit-text">Submit</span>
+            </button>
         </form>
     </div>
 
@@ -192,15 +217,17 @@
         function validateForm() {
             const form = document.getElementById('submissionForm');
             const submitBtn = document.getElementById('submitBtn');
-            const inputs = form.querySelectorAll('input, select');
             let isValid = true;
 
-            inputs.forEach(input => {
+            // Cek input wajib (required fields)
+            const requiredInputs = form.querySelectorAll('input[required], select[required]');
+            requiredInputs.forEach(input => {
                 if (!input.value.trim()) {
                     isValid = false;
                 }
             });
 
+            // Anggota adalah opsional, jadi tidak perlu divalidasi
             submitBtn.disabled = !isValid;
         }
 
@@ -236,4 +263,111 @@
         // Panggil validasi saat halaman dimuat
         validateForm();
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Register ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Split text into characters
+            const lines = document.querySelectorAll('.line');
+            lines.forEach(line => {
+                const text = line.textContent;
+                line.textContent = '';
+                [...text].forEach(char => {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.style.display = 'inline-block';
+                    span.style.transform = 'translateY(100%) rotateX(-90deg)';
+                    span.style.opacity = '0';
+                    line.appendChild(span);
+                });
+            });
+
+            // Initial animation
+            const tl = gsap.timeline();
+
+            lines.forEach((line, lineIndex) => {
+                const chars = line.querySelectorAll('span');
+                tl.to(chars, {
+                    y: 0,
+                    rotateX: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    stagger: 0.03,
+                    ease: "back.out(1.7)",
+                    delay: lineIndex * 0.2
+                });
+            });
+
+            tl.to('.title-underline', {
+                width: '80px',
+                duration: 0.8,
+                ease: "power2.out"
+            }, '-=0.5');
+
+            // Hover animation
+            const title = document.querySelector('.title-animation');
+
+            title.addEventListener('mouseenter', () => {
+                const chars = title.querySelectorAll('span');
+                gsap.to(chars, {
+                    y: () => gsap.utils.random(-15, 15),
+                    rotationZ: () => gsap.utils.random(-15, 15),
+                    duration: 0.4,
+                    ease: "power2.out",
+                    stagger: {
+                        amount: 0.3,
+                        from: "random"
+                    }
+                });
+            });
+
+            title.addEventListener('mouseleave', () => {
+                const chars = title.querySelectorAll('span');
+                gsap.to(chars, {
+                    y: 0,
+                    rotationZ: 0,
+                    duration: 0.4,
+                    ease: "power2.out",
+                    stagger: {
+                        amount: 0.3,
+                        from: "random"
+                    }
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .submit-btn {
+            background: #09191F;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #efefef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(9, 25, 31, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+            background: #061216;
+        }
+
+        .submit-text {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 @endsection

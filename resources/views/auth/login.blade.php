@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-       <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme_contrast=""
+
+    <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme_contrast=""
         data-pc-theme="light">
         <!-- [ Pre-loader ] start -->
         <div class="loader-bg">
@@ -31,12 +32,12 @@
                                     <div class="form-check">
                                         <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
                                             checked="">
-                                        <label class="form-check-label text-muted" for="customCheckc1">Remember me?</label>
+                                        <label class="form-check-label text-muted" for="customCheckc1">Inget ga?</label>
                                     </div>
-                                    <h6 class="text-secondary f-w-400 mb-0">Forgot Password?</h6>
+                                    {{-- <h6 class="text-secondary f-w-400 mb-0">Forgot Password?</h6> --}}
                                 </div>
                                 <div class="d-grid mt-4">
-                                    <button type="submit" class="btn btn-primary">Login</button>
+                                    <button type="submit" class="btn login-btn">Login</button>
                                 </div>
                                 @if ($errors->any())
                                     <div>
@@ -101,3 +102,24 @@
     </script>
 
 @endsection
+
+<style>
+    .login-btn {
+        background-color: var(--bs-primary) !important;
+        color: white !important;
+        border: 2px solid var(--bs-primary) !important;
+        transition: .3s;
+    }
+
+    .login-btn:hover {
+        background-color: white !important;
+        color: var(--bs-primary) !important;
+        border: 2px solid var(--bs-primary) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.2);
+    }
+
+    .login-btn:active {
+        transform: translateY(0);
+    }
+</style>

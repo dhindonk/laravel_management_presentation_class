@@ -8,7 +8,7 @@ function floatchart() {
   (function () {
     var options1 = {
       chart: { type: 'bar', height: 50, sparkline: { enabled: true } },
-      colors: ['#860000'],
+      colors: ['#09191F'],
       plotOptions: { bar: { borderRadius: 2, columnWidth: '80%' } },
       series: [
         {
@@ -164,7 +164,7 @@ function floatchart() {
         stacked: true,
         sparkline: { enabled: true }
       },
-      colors: ['#860000'],
+      colors: ['#09191F'],
       fill: {
         type: 'gradient',
         gradient: {
@@ -209,7 +209,7 @@ function floatchart() {
         type: 'donut'
       },
       series: [27, 23, 20, 17],
-      colors: ['#860000', '#E58A00', '#2CA87F', '#860000'],
+      colors: ['#09191F', '#E58A00', '#2CA87F', '#09191F'],
       labels: ['Total income', 'Total rent', 'Download', 'Views'],
       fill: {
         opacity: [1, 1, 1, 0.3]
@@ -261,7 +261,7 @@ function floatchart() {
     chart.render();
     var options9 = {
       chart: { type: 'bar', height: 80, sparkline: { enabled: true } },
-      colors: ['#860000'],
+      colors: ['#09191F'],
       plotOptions: { bar: { borderRadius: 4, columnWidth: '80%' } },
       series: [
         {
@@ -432,14 +432,14 @@ function floatchart() {
       dataLabels: {
         enabled: false
       },
-      colors: ['#860000', '#860000'],
+      colors: ['#09191F', '#09191F'],
       stroke: {
         show: true,
         width: 3,
         colors: ['transparent']
       },
       fill: {
-        colors: ['#860000', '#860000'],
+        colors: ['#09191F', '#09191F'],
         opacity: [1, 0.5]
       },
       grid: {
@@ -495,14 +495,14 @@ function floatchart() {
       dataLabels: {
         enabled: false
       },
-      colors: ['#860000', '#860000'],
+      colors: ['#09191F', '#09191F'],
       stroke: {
         show: true,
         width: 3,
         colors: ['transparent']
       },
       fill: {
-        colors: ['#860000', '#860000'],
+        colors: ['#09191F', '#09191F'],
         opacity: [1, 0.5]
       },
       grid: {
@@ -594,7 +594,7 @@ function floatchart() {
       },
       labels: ['Components', 'Widgets', 'Pages', 'Forms', 'Other', 'Apps'],
       series: [40, 20, 10, 15, 5, 10],
-      colors: ['#860000', '#860000', '#212529', '#212529', '#212529', '#212529'],
+      colors: ['#09191F', '#09191F', '#212529', '#212529', '#212529', '#212529'],
       fill: {
         opacity: [1, 0.6, 0.4, 0.6, 0.8, 1]
       },
@@ -640,7 +640,7 @@ function floatchart() {
             position: 'front'
           },
           track: {
-            background: '#86000050',
+            background: '#09191F50',
             strokeWidth: '50%'
           },
 
@@ -654,7 +654,7 @@ function floatchart() {
                 return parseInt(val);
               },
               offsetY: 7,
-              color: '#860000',
+              color: '#09191F',
               fontSize: '20px',
               fontWeight: '700',
               show: true
@@ -662,7 +662,7 @@ function floatchart() {
           }
         }
       },
-      colors: ['#860000'],
+      colors: ['#09191F'],
       fill: {
         type: 'solid'
       },
@@ -748,7 +748,7 @@ function floatchart() {
           show: false
         }
       },
-      colors: ['#860000', '#860000', '#860000', '#E58A00'],
+      colors: ['#09191F', '#09191F', '#09191F', '#E58A00'],
       fill: {
         opacity: [1, 0.7, 0.4, 0.3]
       },
@@ -831,7 +831,7 @@ function floatchart() {
           vertical: 5
         }
       },
-      colors: ['#E58A00', '#860000'],
+      colors: ['#E58A00', '#09191F'],
       series: [
         {
           name: 'Net Profit',
@@ -878,7 +878,7 @@ function floatchart() {
         colors: ['transparent'],
         width: 1
       },
-      colors: ['#0F172A', '#860000', '#860000'],
+      colors: ['#0F172A', '#09191F', '#09191F'],
       fill: {
         opacity: [1, 0.6, 1]
       },

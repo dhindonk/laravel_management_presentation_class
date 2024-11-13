@@ -16,7 +16,7 @@ setTimeout(function () {
       stroke: {
         curve: 'straight'
       },
-      colors: ['#860000'],
+      colors: ['#09191F'],
       series: [
         {
           name: 'Desktops',
@@ -103,7 +103,7 @@ setTimeout(function () {
           data: data
         }
       ],
-      colors: ['#860000'],
+      colors: ['#09191F'],
       markers: {
         size: 0
       },
@@ -604,7 +604,7 @@ setTimeout(function () {
         size: 0,
         style: 'hollow'
       },
-      colors: ['#860000'],
+      colors: ['#09191F'],
       xaxis: {
         type: 'datetime',
         min: new Date('01 Mar 2012').getTime(),
@@ -680,7 +680,7 @@ setTimeout(function () {
         }
       });
     });
-    document.querySelector('#ytd').addEventListener('click', function () {});
+    document.querySelector('#ytd').addEventListener('click', function () { });
 
     // bar chart 1
     var options_bar_chart_1 = {
@@ -698,7 +698,7 @@ setTimeout(function () {
       dataLabels: {
         enabled: false
       },
-      colors: ['#2CA87F', '#860000', '#13c2c2'],
+      colors: ['#2CA87F', '#09191F', '#13c2c2'],
       stroke: {
         show: true,
         width: 2,
@@ -748,7 +748,7 @@ setTimeout(function () {
           enabled: true
         }
       },
-      colors: ['#860000', '#2CA87F', '#E58A00', '#13c2c2'],
+      colors: ['#09191F', '#2CA87F', '#E58A00', '#13c2c2'],
       responsive: [
         {
           breakpoint: 480,
@@ -812,7 +812,7 @@ setTimeout(function () {
           }
         }
       },
-      colors: ['#860000', '#2CA87F'],
+      colors: ['#09191F', '#2CA87F'],
       dataLabels: {
         enabled: true,
         offsetX: -6,
@@ -854,7 +854,7 @@ setTimeout(function () {
           horizontal: true
         }
       },
-      colors: ['#860000', '#13c2c2', '#2CA87F', '#E58A00', '#DC2626'],
+      colors: ['#09191F', '#13c2c2', '#2CA87F', '#E58A00', '#DC2626'],
       stroke: {
         width: 1,
         colors: ['#fff']
@@ -926,7 +926,7 @@ setTimeout(function () {
       stroke: {
         width: [0, 4]
       },
-      colors: ['#860000', '#DC2626'],
+      colors: ['#09191F', '#DC2626'],
       labels: [
         '01 Jan 2001',
         '02 Jan 2001',
@@ -964,7 +964,7 @@ setTimeout(function () {
           columnWidth: '50%'
         }
       },
-      colors: ['#DC2626', '#860000', '#E58A00'],
+      colors: ['#DC2626', '#09191F', '#E58A00'],
       series: [
         {
           name: 'Facebook',
@@ -1302,7 +1302,7 @@ setTimeout(function () {
         }
       ],
       colors: ['#2CA87F', '#DC2626'],
-      fill:{
+      fill: {
         type: "solid"
       },
       xaxis: {
@@ -1370,7 +1370,7 @@ setTimeout(function () {
           })
         }
       ],
-      colors: ['#860000', '#2CA87F', '#E58A00', '#DC2626'],
+      colors: ['#09191F', '#2CA87F', '#E58A00', '#DC2626'],
       fill: {
         opacity: 0.8
       },
@@ -1440,7 +1440,7 @@ setTimeout(function () {
       fill: {
         type: 'gradient'
       },
-      colors: ['#860000', '#2CA87F', '#E58A00', '#DC2626'],
+      colors: ['#09191F', '#2CA87F', '#E58A00', '#DC2626'],
       xaxis: {
         tickAmount: 12,
         type: 'datetime',
@@ -1469,7 +1469,7 @@ setTimeout(function () {
           type: 'xy'
         }
       },
-      colors: ['#860000', '#2CA87F', '#DC2626', '#E58A00', '#13c2c2'],
+      colors: ['#09191F', '#2CA87F', '#DC2626', '#E58A00', '#13c2c2'],
       series: [
         {
           name: 'SAMPLE A',
@@ -1644,7 +1644,7 @@ setTimeout(function () {
       dataLabels: {
         enabled: false
       },
-      colors: ['#860000', '#2CA87F', '#DC2626', '#E58A00', '#13c2c2'],
+      colors: ['#09191F', '#2CA87F', '#DC2626', '#E58A00', '#13c2c2'],
       grid: {
         xaxis: {
           showLines: true

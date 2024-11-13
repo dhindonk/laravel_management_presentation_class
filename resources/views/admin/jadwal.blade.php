@@ -3,39 +3,41 @@
 @section('content')
     <div class="container mt-5">
         <div class="d-flex justify-content-start mb-4">
-            <a href="{{ route('admin.index') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.index') }}" class="btn" style="background-color: #09191F; color: white;">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
         </div>
 
-        <h1 class="text-center mb-4">Tambah Jadwal Presentasi</h1>
+        <h1 class="text-center mb-4" style="color: #09191F">Tambah Jadwal Presentasi</h1>
 
         <form action="{{ route('admin.storeJadwal') }}" method="POST" class="mb-4">
             @csrf
-            <div class="form-group">
-                <label for="tanggal_presentasi">Tanggal Presentasi:</label>
+            <div class="form-group mb-3">
+                <label for="tanggal_presentasi" style="color: #09191F; font-weight: 500">Tanggal Presentasi:</label>
                 <input type="date" name="tanggal_presentasi" class="form-control" required>
             </div>
 
-            <div class="form-group">
-                <label for="waktu_presentasi">Waktu Presentasi:</label>
+            <div class="form-group mb-3">
+                <label for="waktu_presentasi" style="color: #09191F; font-weight: 500">Waktu Presentasi:</label>
                 <input type="time" name="waktu_presentasi" class="form-control" required>
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Simpan Jadwal</button>
+                <button type="submit" class="btn" style="background-color: #09191F; color: white;">
+                    Simpan Jadwal
+                </button>
             </div>
         </form>
 
-        <h2 class="text-center mb-4">Daftar Jadwal Presentasi</h2>
+        <h2 class="text-center mb-4" style="color: #09191F">Daftar Jadwal Presentasi</h2>
 
         <div class="table-responsive" style="border-radius: 15px">
             <table class="table table-bordered table-hover">
-                <thead class="bg-dark text-white text-center">
+                <thead class="text-white text-center" style="background: #09191F;">
                     <tr>
-                        <th>Tanggal Presentasi</th>
-                        <th>Waktu Presentasi</th>
-                        <th>Aksi</th>
+                        <th style="color: white !important">Tanggal Presentasi</th>
+                        <th style="color: white !important">Waktu Presentasi</th>
+                        <th style="color: white !important">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
