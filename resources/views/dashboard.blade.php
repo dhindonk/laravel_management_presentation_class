@@ -521,6 +521,7 @@
                     cursor: auto !important;
                 }
             }
+            
         </style>
 
         <!-- GSAP Scripts - Letakkan sebelum closing head tag -->
@@ -543,15 +544,39 @@
             <div class="cursor-outline"></div>
         </div>
 
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1000;">
+            @auth
+                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            @endauth
+        </div>
+
         <!-- ============================================================== -->
         <!-- Main wrapper - style you can find in pages.scss -->
         <!-- ============================================================== -->
         <div id="main-wrapper">
             {{-- Floating Button Container --}}
             <div class="body-button-letsgo">
-                <a href="{{ route('mahasiswa.index') }}" class="btn btn-letsgo">
-                    Let's Go !!
-                </a>
+                @auth
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.index') }}" class="btn btn-letsgo">
+                            Let's Go !!
+                        </a>
+                    @else
+                        <a href="{{ route('mahasiswa.index') }}" class="btn btn-letsgo">
+                            Let's Go !!
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-letsgo">
+                        Let's Go !!
+                    </a>
+                @endauth
             </div>
 
             <!-- End Navigation -->

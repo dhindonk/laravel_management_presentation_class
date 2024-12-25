@@ -18,27 +18,29 @@ class AuthController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        // Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        // Cek kredensial
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $request->session()->regenerate();
+            
             if (Auth::user()->role === 'admin') {
-                return redirect()->route('admin.index');
-            }else{
-                return redirect()->intended('dashboard');
+                return redirect()->intended('admin');
             }
-        } else {
-            return back()->withErrors(['email' => 'Email atau password salah']);
+            return redirect()->intended('mahasiswa');
         }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
     // Tampilkan dashboard setelah login
     public function dashboard()
     {
+        // Dashboard bisa diakses oleh siapa saja
         return view('dashboard');
     }
 
@@ -48,5 +50,31 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login');
+    }
+
+    public function showRegisterForm()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'mahasiswa'
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Registrasi berhasil! Selamat datang!');
     }
 }

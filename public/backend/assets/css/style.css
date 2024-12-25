@@ -3549,14 +3549,14 @@ fieldset:disabled .introjs-tooltip .introjs-button,
 .introjs-tooltip .introjs-button.introjs-nextbutton {
     --bs-btn-color: #ffffff;
     --bs-btn-bg: #09191f;
-    --bs-btn-border-color: #b00000;
+    --bs-btn-border-color: #09191f;
     --bs-btn-hover-color: #ffffff;
-    --bs-btn-hover-bg: #540101;
-    --bs-btn-hover-border-color: #540101;
+    --bs-btn-hover-bg: #09191f;
+    --bs-btn-hover-border-color: #09191f;
     --bs-btn-focus-shadow-rgb: 98, 147, 255;
     --bs-btn-active-color: #ffffff;
     --bs-btn-active-bg: #09191f;
-    --bs-btn-active-border-color: #3560bf;
+    --bs-btn-active-border-color: #09191f;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #ffffff;
     --bs-btn-disabled-bg: #09191f;

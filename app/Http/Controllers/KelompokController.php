@@ -7,12 +7,25 @@ use App\Models\Kelas;
 use App\Models\JadwalPresentasi;
 use Illuminate\Http\Request;
 use App\Models\Lab;
-
+use Illuminate\Support\Facades\Auth;
 class KelompokController extends Controller
 {
     public function index()
     {
-        $kelompok = Kelompok::all();
+        // Ambil semua kelompok
+        $kelompok = Kelompok::with(['lab', 'jadwalPresentasi', 'user'])
+            ->orderByRaw('CASE WHEN user_id = ? THEN 0 ELSE 1 END', [Auth::id()]) // Kelompok user login di atas
+            ->orderBy('created_at', 'desc') // Kemudian urutkan berdasarkan yang terbaru
+            ->get();
+
+        // Tambahkan debugging
+        foreach ($kelompok as $k) {
+            \Log::info('Kelompok ID: ' . $k->id);
+            \Log::info('User ID: ' . $k->user_id);
+            \Log::info('Auth ID: ' . Auth::id());
+            \Log::info('Is Same: ' . ($k->user_id === Auth::id() ? 'true' : 'false'));
+        }
+
         return view('mahasiswa.index', compact('kelompok'));
     }
 
@@ -49,9 +62,7 @@ class KelompokController extends Controller
             'npm_ketua' => 'required',
             'anggota' => 'array',
             'npm_anggota' => 'array',
-            'lab_id' => 'required|exists:labs,id',
             'kelas_id' => 'required',
-            'jadwal_presentasi_id' => 'required',
         ]);
 
         // Filter anggota dan npm_anggota yang tidak kosong
@@ -63,30 +74,142 @@ class KelompokController extends Controller
             return !empty(trim($request->anggota[$key]));
         }, ARRAY_FILTER_USE_KEY));
 
-        // Cek apakah jadwal presentasi pada lab tersebut sudah digunakan
-        $existingKelompok = Kelompok::where('lab_id', $request->lab_id)
-            ->where('jadwal_presentasi_id', $request->jadwal_presentasi_id)
-            ->where('status', 'Diterima')
-            ->first();
-
-        if ($existingKelompok) {
-            return redirect()->back()->withErrors([
-                'jadwal_presentasi_id' => 'Jadwal ini sudah digunakan oleh kelompok lain di lab yang sama.',
-            ])->withInput();
-        }
-
         Kelompok::create([
+            'user_id' => Auth::user()->id,
             'judul_proyek' => $request->judul_proyek,
             'ketua' => $request->ketua,
             'npm_ketua' => $request->npm_ketua,
             'anggota' => json_encode($filteredAnggota),
             'npm_anggota' => json_encode($filteredNpmAnggota),
-            'lab_id' => $request->lab_id,
             'kelas_id' => $request->kelas_id,
-            'jadwal_presentasi_id' => $request->jadwal_presentasi_id,
             'status' => 'Pending',
         ]);
 
-        return redirect()->route('mahasiswa.index')->with('success', 'Pengajuan berhasil dikirim.');
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Pengajuan kelompok berhasil dikirim.');
+    }
+
+    public function showJadwalForm($id)
+    {
+        $kelompok = Kelompok::findOrFail($id);
+        
+        // Cek apakah kelompok milik user yang login
+        if ($kelompok->user_id !== Auth::user()->id) {
+            return redirect()->route('mahasiswa.index')
+                ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
+        }
+        
+        // Cek apakah kelompok sudah diizinkan mengajukan jadwal
+        if (!$kelompok->jadwal_lab_opened) {
+            return redirect()->route('mahasiswa.index')
+                ->with('error', 'Pengajuan jadwal belum dibuka untuk kelompok ini.');
+        }
+        
+        $labs = Lab::all();
+        $jadwals = JadwalPresentasi::all();
+        
+        // Ambil data jadwal yang sudah digunakan
+        $usedJadwals = Kelompok::where('status', 'Diterima')
+            ->whereNotNull('lab_id')
+            ->whereNotNull('jadwal_presentasi_id')
+            ->get(['lab_id', 'jadwal_presentasi_id']);
+        
+        return view('mahasiswa.jadwal', compact('kelompok', 'labs', 'jadwals', 'usedJadwals'));
+    }
+
+    public function updateJadwal(Request $request, $id)
+    {
+        $kelompok = Kelompok::findOrFail($id);
+        
+        // Cek apakah kelompok milik user yang login
+        if ($kelompok->user_id !== Auth::user()->id) {
+            return redirect()->route('mahasiswa.index')
+                ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
+        }
+
+        $request->validate([
+            'lab_id' => 'required|exists:labs,id',
+            'jadwal_presentasi_id' => 'required|exists:jadwal_presentasis,id',
+        ]);
+
+        // Cek apakah jadwal sudah digunakan di lab yang sama
+        $existingKelompok = Kelompok::where('lab_id', $request->lab_id)
+            ->where('jadwal_presentasi_id', $request->jadwal_presentasi_id)
+            ->where('status', 'Diterima')
+            ->where('id', '!=', $id)
+            ->first();
+            
+        if ($existingKelompok) {
+            return back()->with('error', 'Jadwal ini sudah digunakan di lab yang dipilih.');
+        }
+        
+        $kelompok->update([
+            'lab_id' => $request->lab_id,
+            'jadwal_presentasi_id' => $request->jadwal_presentasi_id,
+        ]);
+        
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Jadwal dan lab berhasil diajukan.');
+    }
+
+    public function edit($id)
+    {
+        $kelompok = Kelompok::findOrFail($id);
+        
+        // Cek apakah kelompok milik user yang login
+        if ($kelompok->user_id !== Auth::id()) {
+            return redirect()->route('mahasiswa.index')
+                ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
+        }
+
+        $kelas = Kelas::all();
+        
+        return view('mahasiswa.edit', compact('kelompok', 'kelas'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $kelompok = Kelompok::findOrFail($id);
+        
+        // Cek apakah kelompok milik user yang login
+        if ($kelompok->user_id !== Auth::id()) {
+            return redirect()->route('mahasiswa.index')
+                ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
+        }
+
+        $request->validate([
+            'judul_proyek' => 'required',
+            'ketua' => 'required',
+            'npm_ketua' => 'required',
+            'anggota' => 'array',
+            'npm_anggota' => 'array',
+            'kelas_id' => 'required',
+        ]);
+
+        // Filter anggota dan npm_anggota yang tidak kosong
+        $filteredAnggota = array_values(array_filter($request->anggota, function($value) {
+            return !empty(trim($value));
+        }));
+        
+        $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function($key) use ($request) {
+            return !empty(trim($request->anggota[$key]));
+        }, ARRAY_FILTER_USE_KEY));
+
+        // Reset status ke Pending untuk persetujuan ulang
+        $kelompok->update([
+            'judul_proyek' => $request->judul_proyek,
+            'ketua' => $request->ketua,
+            'npm_ketua' => $request->npm_ketua,
+            'anggota' => json_encode($filteredAnggota),
+            'npm_anggota' => json_encode($filteredNpmAnggota),
+            'kelas_id' => $request->kelas_id,
+            'status' => 'Pending', // Reset status ke Pending
+            'jadwal_lab_opened' => false, // Reset akses jadwal
+            'lab_id' => null, // Reset lab
+            'jadwal_presentasi_id' => null // Reset jadwal
+        ]);
+
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Pengajuan berhasil diupdate dan menunggu persetujuan admin.');
     }
 }

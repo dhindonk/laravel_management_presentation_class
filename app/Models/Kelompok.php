@@ -10,6 +10,7 @@ class Kelompok extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'judul_proyek',
         'ketua',
         'npm_ketua',
@@ -20,6 +21,7 @@ class Kelompok extends Model
         'kelas_id',
         'status',
         'selesai',
+        'jadwal_lab_opened',
     ];
     protected $casts = [
         'anggota' => 'array',
@@ -42,5 +44,15 @@ class Kelompok extends Model
     public function lab()
     {
         return $this->belongsTo(Lab::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function isOwnedByUser($userId)
+    {
+        return $this->user_id == $userId;
     }
 }

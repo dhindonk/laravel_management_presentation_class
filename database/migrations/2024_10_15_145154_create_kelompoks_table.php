@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('kelompoks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('judul_proyek');
             $table->string('ketua');
             $table->string('npm_ketua');
@@ -20,9 +21,10 @@ return new class extends Migration
             $table->json('npm_anggota')->nullable();
             $table->foreignId('kelas_id')->constrained('kelas');
             $table->foreignId('jadwal_presentasi_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('lab_id')->constrained('labs');
+            $table->foreignId('lab_id')->nullable()->constrained('labs');
             $table->enum('status', ['Pending', 'Diterima', 'Ditolak'])->default('Pending');
             $table->boolean('selesai')->default(false);
+            $table->boolean('jadwal_lab_opened')->default(false);
             $table->timestamps();
         });
     }

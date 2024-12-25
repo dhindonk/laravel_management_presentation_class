@@ -11,7 +11,8 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $kelompok = Kelompok::with('nilais')->get(); // Mengambil kelompok beserta nilainya
+        $kelompok = Kelompok::with('nilais')->orderBy('created_at', 'desc') // Kemudian urutkan berdasarkan yang terbaru
+        ->get(); // Mengambil kelompok beserta nilainya
         return view('admin.index', compact('kelompok'));
     }
 
@@ -61,7 +62,7 @@ class AdminController extends Controller
             ]
         );
 
-        return redirect()->route('admin.index')->with('success', 'Penilaian berhasil disimpan.');
+        return response()->json(['success' => true]);
     }
 
 
@@ -120,5 +121,26 @@ class AdminController extends Controller
             return redirect()->back()->with('success', 'Kelompok berhasil dihapus.');
         }
         return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
+    }
+
+    public function openJadwalLab($id)
+    {
+        $kelompok = Kelompok::find($id);
+        if ($kelompok) {
+            $kelompok->jadwal_lab_opened = true;
+            $kelompok->save();
+            return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk kelompok ini.');
+        }
+        return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
+    }
+
+    public function openAllJadwalLab()
+    {
+        // Update semua kelompok yang statusnya 'Diterima' dan belum dibuka akses jadwalnya
+        Kelompok::where('status', 'Diterima')
+            ->where('jadwal_lab_opened', false)
+            ->update(['jadwal_lab_opened' => true]);
+        
+        return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk semua kelompok yang diterima.');
     }
 }

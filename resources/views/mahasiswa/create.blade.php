@@ -12,7 +12,6 @@
     <!-- Pastikan library GSAP sudah dimuat -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
     <div class="container mt-5">
         <div class="title-container text-center mb-5">
             <h1 class="title-animation">
@@ -69,14 +68,6 @@
                 </div>
                 <button type="button" class="btn btn-outline-primary" onclick="addAnggota()">Tambah Anggota</button>
             </div>
-            <div class="mb-3">
-                <label for="labSelect" class="form-label">Pilih Lab</label>
-                <select id="labSelect" name="lab_id" class="form-select">
-                    @foreach ($labs as $lab)
-                        <option value="{{ $lab->id }}">{{ $lab->nama_lab }}</option>
-                    @endforeach
-                </select>
-            </div>
 
             <!-- Pilih Kelas -->
             <div class="mb-3">
@@ -88,32 +79,8 @@
                 </select>
             </div>
 
-            <div class="mb-3">
-                <label for="jadwal_presentasi_id" class="form-label">Pilih Jadwal Presentasi</label>
-                <select id="jadwal_presentasi_id" name="jadwal_presentasi_id" class="form-select" required>
-                    <option value="">Pilih Jadwal</option>
-                    @foreach ($jadwal as $j)
-                        @php
-                            // Cek apakah jadwal ini sudah digunakan oleh kelompok lain di lab yang sama
-                            $isDisabled = false;
-                            foreach ($kelompoks as $kelompok) {
-                                if ($kelompok->jadwal_presentasi_id == $j->id && $kelompok->lab == old('lab_id')) {
-                                    $isDisabled = true;
-                                    break;
-                                }
-                            }
-                        @endphp
-                        <option value="{{ $j->id }}" {{ $isDisabled ? 'disabled' : '' }}>
-                            {{ $j->tanggal_presentasi }} - {{ $j->waktu_presentasi }}
-                            {{ $isDisabled ? '(Sudah Diambil)' : '' }}
-                        </option>
-                    @endforeach
-
-                </select>
-            </div>
-
             <!-- Submit Button -->
-            <button type="submit" id="submitBtn" class="btn w-100 position-relative overflow-hidden submit-btn" disabled>
+            <button type="submit" id="submitBtn" class="btn w-100 position-relative overflow-hidden submit-btn">
                 <span class="submit-text">Submit</span>
             </button>
         </form>

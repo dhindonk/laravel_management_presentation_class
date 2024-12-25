@@ -47,6 +47,9 @@
                                     </div>
                                 @endif
                             </form>
+                            <div class="d-flex justify-content-center mt-3">
+                                <span>Belum punya akun? <a href="{{ route('register') }}" class="link-primary">Register</a></span>
+                            </div>
                         </div>
                     </div>
                 </div>

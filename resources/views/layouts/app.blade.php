@@ -30,15 +30,7 @@
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-14K1GBX9FG"></script>
 
         <style>
-            /* Custom Cursor Styles */
-            * {
-                cursor: none !important;
-                scroll-behavior: smooth;
-                scrollbar-width: thin;
-                scrollbar-color: #0f2932 transparent;
-
-            }
-
+            /* Custom Cursor Base Styles */
             .custom-cursor {
                 pointer-events: none;
                 position: fixed;
@@ -48,58 +40,70 @@
             .cursor-dot {
                 width: 8px;
                 height: 8px;
-                background-color: var(--bs-primary);
+                background-color: var(--cursor-color, #09191F);
                 border-radius: 50%;
                 position: fixed;
                 pointer-events: none;
-                transition: transform 0.2s, width 0.2s, height 0.2s, background-color 0.3s;
-                left: 0;
-                top: 0;
+                transition: transform 0.2s ease;
                 transform: translate(-50%, -50%);
+                mix-blend-mode: difference;
             }
 
             .cursor-outline {
                 width: 40px;
                 height: 40px;
-                border: 2px solid var(--bs-primary);
+                border: 2px solid var(--cursor-color, #09191F);
                 border-radius: 50%;
                 position: fixed;
                 pointer-events: none;
-                transition: transform 0.3s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
-                left: 0;
-                top: 0;
+                transition: transform 0.3s ease;
                 transform: translate(-50%, -50%);
-            }
-
-            /* Hover effects */
-            a:hover~.custom-cursor .cursor-dot,
-            button:hover~.custom-cursor .cursor-dot {
-                transform: translate(-50%, -50%) scale(1.5);
-                background-color: var(--bs-primary);
-            }
-
-            a:hover~.custom-cursor .cursor-outline,
-            button:hover~.custom-cursor .cursor-outline {
-                transform: translate(-50%, -50%) scale(0.8);
-                border-color: var(--bs-primary);
-                background-color: rgba(var(--bs-primary-rgb), 0.1);
-            }
-
-            .magnetic-text:hover~.custom-cursor .cursor-outline {
-                transform: scale(1.5);
-                border-style: dashed;
-                animation: rotate 3s linear infinite;
                 mix-blend-mode: difference;
             }
 
-            @keyframes rotate {
-                from {
-                    transform: scale(2) rotate(0deg);
-                }
+            /* Adaptive cursor behavior */
+            [data-theme="light"] .cursor-dot,
+            .bg-white ~ .custom-cursor .cursor-dot {
+                background-color: #000000;
+                mix-blend-mode: difference;
+            }
 
-                to {
-                    transform: scale(2) rotate(360deg);
-                }
+            [data-theme="light"] .cursor-outline,
+            .bg-white ~ .custom-cursor .cursor-outline {
+                border-color: #000000;
+                mix-blend-mode: difference;
+            }
+
+            [data-theme="dark"] .cursor-dot,
+            .bg-dark ~ .custom-cursor .cursor-dot {
+                background-color: #ffffff;
+                mix-blend-mode: difference;
+            }
+
+            [data-theme="dark"] .cursor-outline,
+            .bg-dark ~ .custom-cursor .cursor-outline {
+                border-color: #ffffff;
+                mix-blend-mode: difference;
+            }
+
+            /* Hover effects */
+            a:hover ~ .custom-cursor .cursor-dot,
+            button:hover ~ .custom-cursor .cursor-dot {
+                transform: translate(-50%, -50%) scale(1.5);
+                background-color: #ffffff;
+            }
+
+            a:hover ~ .custom-cursor .cursor-outline,
+            button:hover ~ .custom-cursor .cursor-outline {
+                transform: translate(-50%, -50%) scale(0.8);
+                border-color: #ffffff;
+            }
+
+            .magnetic-text:hover ~ .custom-cursor .cursor-outline {
+                transform: scale(1.5);
+                border-style: dashed;
+                animation: rotate 3s linear infinite;
+                border-color: #ffffff;
             }
 
             /* Hide cursor on mobile */
@@ -111,88 +115,6 @@
                 * {
                     cursor: auto !important;
                 }
-            }
-
-            /* Page Transition */
-            .page-transition {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: var(--bs-primary);
-                z-index: 9998;
-                transform: scaleY(0);
-                transform-origin: top;
-            }
-
-            /* Preloader */
-            #preloader {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: var(--bs-primary);
-                z-index: 9999;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .preloader {
-                display: flex;
-                gap: 10px;
-            }
-
-            .preloader span {
-                width: 15px;
-                height: 15px;
-                background-color: white;
-                border-radius: 50%;
-                animation: bounce 0.5s alternate infinite;
-            }
-
-            .preloader span:nth-child(2) {
-                animation-delay: 0.15s;
-            }
-
-            @keyframes bounce {
-                to {
-                    transform: translateY(-20px);
-                }
-            }
-
-            /* Adaptive cursor behavior */
-            a, button, .magnetic-text {
-                cursor: none !important;
-                transition: transform 0.3s ease;
-            }
-
-            a:hover, button:hover, .magnetic-text:hover {
-                transform: scale(1.05);
-            }
-
-            /* Pada background putih */
-            [data-theme="light"] .cursor-dot,
-            .bg-white ~ .custom-cursor .cursor-dot {
-                background-color: var(--bs-primary);
-            }
-
-            [data-theme="light"] .cursor-outline,
-            .bg-white ~ .custom-cursor .cursor-outline {
-                border-color: var(--bs-primary);
-            }
-
-            /* Pada background gelap */
-            [data-theme="dark"] .cursor-dot,
-            .bg-dark ~ .custom-cursor .cursor-dot {
-                background-color: white;
-            }
-
-            [data-theme="dark"] .cursor-outline,
-            .bg-dark ~ .custom-cursor .cursor-outline {
-                border-color: rgba(255, 255, 255, 0.5);
             }
         </style>
 
@@ -333,29 +255,20 @@
                         requestAnimationFrame(() => this.animate());
                     },
                     adaptiveCursor: function() {
-                        const dot = this.dot;
-                        const outline = this.outline;
-                        
                         document.addEventListener('mousemove', (e) => {
-                            // Ambil element di posisi cursor
                             const element = document.elementFromPoint(e.clientX, e.clientY);
                             if (element) {
-                                // Ambil warna background
                                 const bgColor = window.getComputedStyle(element).backgroundColor;
                                 const rgb = bgColor.match(/\d+/g);
                                 
                                 if (rgb) {
-                                    // Hitung luminance untuk menentukan apakah background gelap atau terang
-                                    const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-                                    
-                                    if (luminance > 0.5) {
-                                        // Background terang - cursor gelap
-                                        dot.style.backgroundColor = 'var(--bs-primary)';
-                                        outline.style.borderColor = 'var(--bs-primary)';
+                                    const brightness = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+                                    if (brightness > 0.5) {
+                                        this.dot.style.backgroundColor = '#000000';
+                                        this.outline.style.borderColor = '#000000';
                                     } else {
-                                        // Background gelap - cursor terang
-                                        dot.style.backgroundColor = 'white';
-                                        outline.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                                        this.dot.style.backgroundColor = '#ffffff';
+                                        this.outline.style.borderColor = '#ffffff';
                                     }
                                 }
                             }
