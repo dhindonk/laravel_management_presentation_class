@@ -88,20 +88,20 @@
         }
 
         /* Mengubah warna cursor saat di atas area tabel */
-        .table-responsive:hover ~ .custom-cursor .cursor-dot,
-        .table:hover ~ .custom-cursor .cursor-dot,
-        .table tbody:hover ~ .custom-cursor .cursor-dot,
-        .table tr:hover ~ .custom-cursor .cursor-dot,
-        .table td:hover ~ .custom-cursor .cursor-dot {
+        .table-responsive:hover~.custom-cursor .cursor-dot,
+        .table:hover~.custom-cursor .cursor-dot,
+        .table tbody:hover~.custom-cursor .cursor-dot,
+        .table tr:hover~.custom-cursor .cursor-dot,
+        .table td:hover~.custom-cursor .cursor-dot {
             background-color: #09191F !important;
             mix-blend-mode: normal !important;
         }
 
-        .table-responsive:hover ~ .custom-cursor .cursor-outline,
-        .table:hover ~ .custom-cursor .cursor-outline,
-        .table tbody:hover ~ .custom-cursor .cursor-outline,
-        .table tr:hover ~ .custom-cursor .cursor-outline,
-        .table td:hover ~ .custom-cursor .cursor-outline {
+        .table-responsive:hover~.custom-cursor .cursor-outline,
+        .table:hover~.custom-cursor .cursor-outline,
+        .table tbody:hover~.custom-cursor .cursor-outline,
+        .table tr:hover~.custom-cursor .cursor-outline,
+        .table td:hover~.custom-cursor .cursor-outline {
             border-color: #09191F !important;
             mix-blend-mode: normal !important;
         }
@@ -125,7 +125,7 @@
         }
 
         /* Override untuk badges dan icons */
-        .badge, 
+        .badge,
         .fas {
             position: relative;
             z-index: 2;
@@ -138,19 +138,19 @@
         }
 
         /* Mengubah warna cursor saat di atas baris tabel */
-        .table tbody tr:hover ~ .custom-cursor .cursor-dot,
-        .table tbody tr:hover ~ .custom-cursor .cursor-outline,
-        .table-responsive:hover ~ .custom-cursor .cursor-dot,
-        .table-responsive:hover ~ .custom-cursor .cursor-outline {
+        .table tbody tr:hover~.custom-cursor .cursor-dot,
+        .table tbody tr:hover~.custom-cursor .cursor-outline,
+        .table-responsive:hover~.custom-cursor .cursor-dot,
+        .table-responsive:hover~.custom-cursor .cursor-outline {
             --cursor-color: #09191F !important;
             mix-blend-mode: normal !important;
         }
 
-        .table tbody tr:hover ~ .custom-cursor .cursor-dot {
+        .table tbody tr:hover~.custom-cursor .cursor-dot {
             background-color: #09191F !important;
         }
 
-        .table tbody tr:hover ~ .custom-cursor .cursor-outline {
+        .table tbody tr:hover~.custom-cursor .cursor-outline {
             border-color: #09191F !important;
         }
 
@@ -184,7 +184,7 @@
         }
 
         /* Tambahkan style untuk cell tabel */
-        .table td, 
+        .table td,
         .table th {
             position: relative;
             z-index: 2;
@@ -215,7 +215,8 @@
                     </form>
                 </div>
                 <div class="card border-0 shadow-sm overflow-hidden wow fadeInUp">
-                    <div class="card-header text-white p-4 d-flex justify-content-between align-items-center" style="background-color: white;">
+                    <div class="card-header text-white p-4 d-flex justify-content-between align-items-center"
+                        style="background-color: white;">
                         <div class="header-content">
                             <h5 class=" title-animation" style="color: var(--bs-primary);">
                                 <span class="line-wrapper">
@@ -236,7 +237,7 @@
                         {{-- <div class="row mb-4">
                             <div class="col-md-12">
                                 <div class="d-flex justify-content-end">
-                                   
+
                                 </div>
                             </div>
                         </div> --}}
@@ -250,6 +251,7 @@
                                         <th>Ketua & Anggota</th>
                                         <th>Lab</th>
                                         <th>Jadwal Presentasi</th>
+                                        <th>Link Gmeet</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -308,6 +310,7 @@
                                                     @else
                                                         <span class="badge bg-secondary">Belum memilih lab</span>
                                                     @endif
+
                                                 </td>
                                                 <td class="text-center">
                                                     @if ($k->jadwalPresentasi)
@@ -315,6 +318,19 @@
                                                         <small>{{ $k->jadwalPresentasi->waktu_presentasi }}</small>
                                                     @else
                                                         <span class="badge bg-secondary">Belum diatur</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+
+                                                    @if ($k->isOwnedByUser(Auth::id()))
+                                                        @if ($k->link)
+                                                            <a href="{{ $k->link }}"
+                                                                target="_blank">{{ $k->link }}</a>
+                                                        @else
+                                                            <span class="badge bg-secondary">Belum ada link</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="badge bg-light text-dark">No Access</span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
@@ -704,7 +720,7 @@
             row.addEventListener('mouseenter', () => {
                 const cursor = document.querySelector('.cursor-dot');
                 const outline = document.querySelector('.cursor-outline');
-                
+
                 cursor.style.backgroundColor = '#09191F';
                 cursor.style.mixBlendMode = 'normal';
                 outline.style.borderColor = '#09191F';
@@ -714,7 +730,7 @@
             row.addEventListener('mouseleave', () => {
                 const cursor = document.querySelector('.cursor-dot');
                 const outline = document.querySelector('.cursor-outline');
-                
+
                 cursor.style.backgroundColor = '';
                 cursor.style.mixBlendMode = 'difference';
                 outline.style.borderColor = '';
@@ -724,12 +740,12 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const tableElements = document.querySelectorAll('.table *, .table-responsive *');
-            
+
             tableElements.forEach(element => {
                 element.addEventListener('mouseenter', () => {
                     const cursor = document.querySelector('.cursor-dot');
                     const outline = document.querySelector('.cursor-outline');
-                    
+
                     if (cursor && outline) {
                         cursor.style.backgroundColor = '#09191F';
                         cursor.style.mixBlendMode = 'normal';

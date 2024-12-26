@@ -128,6 +128,7 @@ class AdminController extends Controller
         $kelompok = Kelompok::find($id);
         if ($kelompok) {
             $kelompok->jadwal_lab_opened = true;
+            $kelompok->link = request('link'); 
             $kelompok->save();
             return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk kelompok ini.');
         }
@@ -140,7 +141,7 @@ class AdminController extends Controller
         Kelompok::where('status', 'Diterima')
             ->where('jadwal_lab_opened', false)
             ->update(['jadwal_lab_opened' => true]);
-        
+
         return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk semua kelompok yang diterima.');
     }
 }

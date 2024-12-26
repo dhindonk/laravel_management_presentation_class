@@ -294,18 +294,43 @@ function openJadwalLab(url) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = url;
+            // Menggunakan SweetAlert untuk meminta link
+            Swal.fire({
+                title: 'Masukkan Link',
+                input: 'text',
+                inputLabel: 'Link Gmeet untuk kelompok',
+                inputPlaceholder: 'Masukkan link di sini',
+                showCancelButton: true,
+                confirmButtonText: 'Kirim',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Anda harus memasukkan link!';
+                    }
+                }
+            }).then((inputResult) => {
+                if (inputResult.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = url;
 
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = '_token';
-            csrf.value = '{{ csrf_token() }}';
-            form.appendChild(csrf);
+                    const csrf = document.createElement('input');
+                    csrf.type = 'hidden';
+                    csrf.name = '_token';
+                    csrf.value = '{{ csrf_token() }}';
+                    form.appendChild(csrf);
 
-            document.body.appendChild(form);
-            form.submit();
+                    // Tambahkan input untuk link dari SweetAlert
+                    const linkInput = document.createElement('input');
+                    linkInput.type = 'hidden';
+                    linkInput.name = 'link'; // Pastikan nama ini sesuai dengan yang diambil di controller
+                    linkInput.value = inputResult.value; // Mengambil nilai dari input SweetAlert
+                    form.appendChild(linkInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
         }
     });
 }
@@ -410,10 +435,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const button = event.relatedTarget;
             kelompokId = button.getAttribute('data-id');
             const kelompokNama = button.getAttribute('data-nama');
-            
+
             const modalTitle = penilaianModal.querySelector('.modal-title');
             modalTitle.textContent = 'Penilaian: ' + kelompokNama;
-            
+
             // Reset form
             document.getElementById('penilaianForm').reset();
         });

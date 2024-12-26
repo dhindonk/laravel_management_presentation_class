@@ -26,4 +26,4 @@ class UserSeeder extends Seeder
             'role' => 'mahasiswa'
         ]);
     }
-} 
+}

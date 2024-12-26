@@ -22,6 +22,7 @@ class Kelompok extends Model
         'status',
         'selesai',
         'jadwal_lab_opened',
+        'link',
     ];
     protected $casts = [
         'anggota' => 'array',

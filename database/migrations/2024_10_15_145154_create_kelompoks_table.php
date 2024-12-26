@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->string('judul_proyek');
             $table->string('ketua');
+            $table->string('link')->nullable();
             $table->string('npm_ketua');
             $table->json('anggota')->nullable();
             $table->json('npm_anggota')->nullable();

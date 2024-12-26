@@ -32,10 +32,10 @@ class KelompokController extends Controller
     public function create()
     {
         $kelas = Kelas::all();
-        
+
         // Ambil lab
         $labs = Lab::all();
-        
+
         // Ambil semua kelompok yang diterima, beserta lab_id dan jadwal_presentasi_id mereka
         $kelompoks = Kelompok::where('status', 'Diterima')
             ->get(['lab_id', 'jadwal_presentasi_id']);
@@ -69,7 +69,7 @@ class KelompokController extends Controller
         $filteredAnggota = array_values(array_filter($request->anggota, function($value) {
             return !empty(trim($value));
         }));
-        
+
         $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function($key) use ($request) {
             return !empty(trim($request->anggota[$key]));
         }, ARRAY_FILTER_USE_KEY));
@@ -92,35 +92,35 @@ class KelompokController extends Controller
     public function showJadwalForm($id)
     {
         $kelompok = Kelompok::findOrFail($id);
-        
+
         // Cek apakah kelompok milik user yang login
         if ($kelompok->user_id !== Auth::user()->id) {
             return redirect()->route('mahasiswa.index')
                 ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
         }
-        
+
         // Cek apakah kelompok sudah diizinkan mengajukan jadwal
         if (!$kelompok->jadwal_lab_opened) {
             return redirect()->route('mahasiswa.index')
                 ->with('error', 'Pengajuan jadwal belum dibuka untuk kelompok ini.');
         }
-        
+
         $labs = Lab::all();
         $jadwals = JadwalPresentasi::all();
-        
+
         // Ambil data jadwal yang sudah digunakan
         $usedJadwals = Kelompok::where('status', 'Diterima')
             ->whereNotNull('lab_id')
             ->whereNotNull('jadwal_presentasi_id')
             ->get(['lab_id', 'jadwal_presentasi_id']);
-        
+
         return view('mahasiswa.jadwal', compact('kelompok', 'labs', 'jadwals', 'usedJadwals'));
     }
 
     public function updateJadwal(Request $request, $id)
     {
         $kelompok = Kelompok::findOrFail($id);
-        
+
         // Cek apakah kelompok milik user yang login
         if ($kelompok->user_id !== Auth::user()->id) {
             return redirect()->route('mahasiswa.index')
@@ -138,16 +138,16 @@ class KelompokController extends Controller
             ->where('status', 'Diterima')
             ->where('id', '!=', $id)
             ->first();
-            
+
         if ($existingKelompok) {
             return back()->with('error', 'Jadwal ini sudah digunakan di lab yang dipilih.');
         }
-        
+
         $kelompok->update([
             'lab_id' => $request->lab_id,
             'jadwal_presentasi_id' => $request->jadwal_presentasi_id,
         ]);
-        
+
         return redirect()->route('mahasiswa.index')
             ->with('success', 'Jadwal dan lab berhasil diajukan.');
     }
@@ -155,7 +155,7 @@ class KelompokController extends Controller
     public function edit($id)
     {
         $kelompok = Kelompok::findOrFail($id);
-        
+
         // Cek apakah kelompok milik user yang login
         if ($kelompok->user_id !== Auth::id()) {
             return redirect()->route('mahasiswa.index')
@@ -163,14 +163,14 @@ class KelompokController extends Controller
         }
 
         $kelas = Kelas::all();
-        
+
         return view('mahasiswa.edit', compact('kelompok', 'kelas'));
     }
 
     public function update(Request $request, $id)
     {
         $kelompok = Kelompok::findOrFail($id);
-        
+
         // Cek apakah kelompok milik user yang login
         if ($kelompok->user_id !== Auth::id()) {
             return redirect()->route('mahasiswa.index')
@@ -190,7 +190,7 @@ class KelompokController extends Controller
         $filteredAnggota = array_values(array_filter($request->anggota, function($value) {
             return !empty(trim($value));
         }));
-        
+
         $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function($key) use ($request) {
             return !empty(trim($request->anggota[$key]));
         }, ARRAY_FILTER_USE_KEY));
@@ -211,5 +211,18 @@ class KelompokController extends Controller
 
         return redirect()->route('mahasiswa.index')
             ->with('success', 'Pengajuan berhasil diupdate dan menunggu persetujuan admin.');
+    }
+
+    public function openJadwalLab($id)
+    {
+        $kelompok = Kelompok::find($id);
+        if ($kelompok) {
+            $kelompok->jadwal_lab_opened = true;
+            // Tambahkan logika untuk mengisi link
+            $kelompok->link = request('link'); // Mengambil link dari request
+            $kelompok->save();
+            return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk kelompok ini.');
+        }
+        return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
     }
 }
