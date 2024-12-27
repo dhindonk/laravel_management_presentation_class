@@ -10,9 +10,10 @@ class KelasSeeder extends Seeder
     public function run()
     {
         $kelas = [
-            ['nama_kelas' => 'IF-A', 'penanggung_jawab' => 'Dosen A'],
-            ['nama_kelas' => 'IF-B', 'penanggung_jawab' => 'Dosen B'],
-            ['nama_kelas' => 'IF-C', 'penanggung_jawab' => 'Dosen C'],
+            ['nama_kelas' => 'Gab A', 'penanggung_jawab' => 'Moch. Fahdin'],
+            ['nama_kelas' => 'Gab B', 'penanggung_jawab' => 'Ajiz Abdul Majid'],
+            ['nama_kelas' => 'Gab C', 'penanggung_jawab' => 'Ajiz Abdul Majid'],
+            ['nama_kelas' => 'Gab D', 'penanggung_jawab' => 'Moch. Fahdin'],
         ];
 
         foreach ($kelas as $k) {

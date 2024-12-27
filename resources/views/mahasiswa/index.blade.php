@@ -249,7 +249,6 @@
                                     <tr>
                                         <th>Judul Proyek</th>
                                         <th>Ketua & Anggota</th>
-                                        <th>Lab</th>
                                         <th>Jadwal Presentasi</th>
                                         <th>Link Gmeet</th>
                                         <th>Status</th>
@@ -304,30 +303,34 @@
                                                         @endphp
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    @if ($k->lab)
-                                                        {{ $k->lab->nama_lab }}
-                                                    @else
-                                                        <span class="badge bg-secondary">Belum memilih lab</span>
-                                                    @endif
 
-                                                </td>
                                                 <td class="text-center">
                                                     @if ($k->jadwalPresentasi)
-                                                        <span>{{ $k->jadwalPresentasi->tanggal_presentasi }}</span><br>
-                                                        <small>{{ $k->jadwalPresentasi->waktu_presentasi }}</small>
+                                                        {{ \Carbon\Carbon::parse($k->jadwalPresentasi->tanggal_presentasi)->isoFormat('dddd, D MMMM Y') }}
+                                                        <br>
+                                                        <small>
+                                                            {{ $k->jadwalPresentasi->waktu_presentasi }}
+                                                        </small>
                                                     @else
                                                         <span class="badge bg-secondary">Belum diatur</span>
                                                     @endif
                                                 </td>
                                                 <td>
-
                                                     @if ($k->isOwnedByUser(Auth::id()))
-                                                        @if ($k->link)
-                                                            <a href="{{ $k->link }}"
-                                                                target="_blank">{{ $k->link }}</a>
+                                                        @if ($k->selesai == 1)
+                                                            <span class="badge bg-secondary">Link ditutup</span>
                                                         @else
-                                                            <span class="badge bg-secondary">Belum ada link</span>
+                                                            @if ($k->jadwalPresentasi)
+                                                                @if ($k->link)
+                                                                    <a href="{{ $k->link }}" class="badge bg-behance"
+                                                                        style="color:white !important" target="_blank">Klik
+                                                                        to Open</a>
+                                                                @else
+                                                                    <span class="badge bg-secondary">Belum ada link</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="badge bg-secondary">Belum atur jadwal</span>
+                                                            @endif
                                                         @endif
                                                     @else
                                                         <span class="badge bg-light text-dark">No Access</span>

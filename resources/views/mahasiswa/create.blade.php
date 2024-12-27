@@ -73,11 +73,30 @@
             <div class="mb-3">
                 <label for="kelas_id" class="form-label">Pilih Kelas</label>
                 <select id="kelas_id" name="kelas_id" class="form-select" required>
+                    <option value="" disabled selected>Pilih Kelas</option>
                     @foreach ($kelas as $k)
-                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                        <option value="{{ $k->id }}" data-penanggung-jawab="{{ $k->penanggung_jawab }}">{{ $k->nama_kelas }}</option>
                     @endforeach
                 </select>
             </div>
+
+            <!-- Penanggung Jawab -->
+            <div class="mb-3">
+                <label for="penanggung_jawab" class="form-label">Penanggung Jawab</label>
+                <input type="text" id="penanggung_jawab" name="penanggung_jawab" class="form-control" readonly>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const kelasSelect = document.getElementById('kelas_id');
+                    const penanggungJawabInput = document.getElementById('penanggung_jawab');
+
+                    kelasSelect.addEventListener('change', function() {
+                        const selectedOption = kelasSelect.options[kelasSelect.selectedIndex];
+                        penanggungJawabInput.value = selectedOption.getAttribute('data-penanggung-jawab');
+                    });
+                });
+            </script>
 
             <!-- Submit Button -->
             <button type="submit" id="submitBtn" class="btn w-100 position-relative overflow-hidden submit-btn">

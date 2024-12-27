@@ -8,6 +8,8 @@ use App\Models\JadwalPresentasi;
 use Illuminate\Http\Request;
 use App\Models\Lab;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+
 class KelompokController extends Controller
 {
     public function index()
@@ -19,12 +21,12 @@ class KelompokController extends Controller
             ->get();
 
         // Tambahkan debugging
-        foreach ($kelompok as $k) {
-            \Log::info('Kelompok ID: ' . $k->id);
-            \Log::info('User ID: ' . $k->user_id);
-            \Log::info('Auth ID: ' . Auth::id());
-            \Log::info('Is Same: ' . ($k->user_id === Auth::id() ? 'true' : 'false'));
-        }
+        // foreach ($kelompok as $k) {
+        //     \Log::info('Kelompok ID: ' . $k->id);
+        //     \Log::info('User ID: ' . $k->user_id);
+        //     \Log::info('Auth ID: ' . Auth::id());
+        //     \Log::info('Is Same: ' . ($k->user_id === Auth::id() ? 'true' : 'false'));
+        // }
 
         return view('mahasiswa.index', compact('kelompok'));
     }
@@ -66,11 +68,11 @@ class KelompokController extends Controller
         ]);
 
         // Filter anggota dan npm_anggota yang tidak kosong
-        $filteredAnggota = array_values(array_filter($request->anggota, function($value) {
+        $filteredAnggota = array_values(array_filter($request->anggota, function ($value) {
             return !empty(trim($value));
         }));
 
-        $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function($key) use ($request) {
+        $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function ($key) use ($request) {
             return !empty(trim($request->anggota[$key]));
         }, ARRAY_FILTER_USE_KEY));
 
@@ -109,16 +111,19 @@ class KelompokController extends Controller
         $jadwals = JadwalPresentasi::all();
 
         // Ambil data jadwal yang sudah digunakan
-        $usedJadwals = Kelompok::where('status', 'Diterima')
-            ->whereNotNull('lab_id')
+        $usedJadwals = Kelompok::where('status', 'Diterima') // Pastikan status "Diterima" sudah benar
             ->whereNotNull('jadwal_presentasi_id')
-            ->get(['lab_id', 'jadwal_presentasi_id']);
+            ->pluck('jadwal_presentasi_id') // Hanya ambil ID jadwal
+            ->toArray(); // Konversi ke array
+
 
         return view('mahasiswa.jadwal', compact('kelompok', 'labs', 'jadwals', 'usedJadwals'));
     }
 
+
     public function updateJadwal(Request $request, $id)
     {
+        Carbon::setLocale('id');
         $kelompok = Kelompok::findOrFail($id);
 
         // Cek apakah kelompok milik user yang login
@@ -128,7 +133,6 @@ class KelompokController extends Controller
         }
 
         $request->validate([
-            'lab_id' => 'required|exists:labs,id',
             'jadwal_presentasi_id' => 'required|exists:jadwal_presentasis,id',
         ]);
 
@@ -142,6 +146,7 @@ class KelompokController extends Controller
         if ($existingKelompok) {
             return back()->with('error', 'Jadwal ini sudah digunakan di lab yang dipilih.');
         }
+
 
         $kelompok->update([
             'lab_id' => $request->lab_id,
@@ -187,11 +192,11 @@ class KelompokController extends Controller
         ]);
 
         // Filter anggota dan npm_anggota yang tidak kosong
-        $filteredAnggota = array_values(array_filter($request->anggota, function($value) {
+        $filteredAnggota = array_values(array_filter($request->anggota, function ($value) {
             return !empty(trim($value));
         }));
 
-        $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function($key) use ($request) {
+        $filteredNpmAnggota = array_values(array_filter($request->npm_anggota, function ($key) use ($request) {
             return !empty(trim($request->anggota[$key]));
         }, ARRAY_FILTER_USE_KEY));
 

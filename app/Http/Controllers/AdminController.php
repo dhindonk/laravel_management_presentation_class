@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\JadwalPresentasi;
 use App\Models\Kelompok;
 use App\Models\Nilai;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        $kelompok = Kelompok::with('nilais')->orderBy('created_at', 'desc') // Kemudian urutkan berdasarkan yang terbaru
-        ->get(); // Mengambil kelompok beserta nilainya
+        $kelompok = Kelompok::with(['nilais', 'kelas', 'jadwalPresentasi']) 
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('admin.index', compact('kelompok'));
     }
 
@@ -128,7 +130,7 @@ class AdminController extends Controller
         $kelompok = Kelompok::find($id);
         if ($kelompok) {
             $kelompok->jadwal_lab_opened = true;
-            $kelompok->link = request('link'); 
+            $kelompok->link = request('link');
             $kelompok->save();
             return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk kelompok ini.');
         }
