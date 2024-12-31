@@ -1,4 +1,5 @@
 # 🎓 Sistem Manajemen Presentasi MobPro
+![image](https://github.com/user-attachments/assets/b2da0a50-baf3-43be-9c87-a60331696abb)
 
 ## 📱 Tentang Aplikasi
 Sistem manajemen presentasi yang dirancang khusus untuk memudahkan proses pengajuan dan penilaian presentasi mata kuliah Mobile Programming.
