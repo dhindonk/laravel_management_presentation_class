@@ -189,22 +189,70 @@
             position: relative;
             z-index: 2;
         }
+
+        /* Btn Back */
+        .back-button {
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .back-button:hover {
+            background-color: white;
+            color: var(--bs-primary);
+            transform: translateX(-5px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .back-button:active {
+            transform: translateX(-2px);
+        }
+
+        .back-button i {
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover i {
+            transform: translateX(-3px);
+        }
+
+        .back-button span {
+            position: relative;
+            top: 1px;
+        }
     </style>
 @endsection
 
 @section('content')
-    {{--  --}}
 
-    <section class="pc-container" style="margin: 40px 40px 0px 40px !important; ">
+    <section class="container-fluid pt-5">   
         <div class="row justify-content-center">
             <div class="col-sm-12 col-md-10">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="user-info bg-light">
-                        <h5 class="mb-1" style="color: var(--bs-primary);">
-                            <i class="fas fa-user-circle me-2"></i>
-                            {{ Auth::user()->name }}
-                        </h5>
-                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                    <div class="body-column-user">
+                        <div class="d-flex justify-content-start mb-3">
+                            <a href="{{ route('dashboard') }}" class="back-button">
+                                <i class="fas fa-chevron-left me-2"></i>
+                                <span>Kembali</span>
+                            </a>
+                        </div>
+                        <div class="user-info bg-light">
+                            <h5 class="mb-1" style="color: var(--bs-primary);">
+                                <i class="fas fa-user-circle me-2"></i>
+                                {{ Auth::user()->name }}
+                            </h5>
+                            <small class="text-muted">{{ Auth::user()->email }}</small>
+                        </div>
                     </div>
                     <form action="{{ route('logout') }}" method="POST" class="m-0">
                         @csrf
@@ -220,7 +268,8 @@
                         <div class="header-content">
                             <h5 class=" title-animation" style="color: var(--bs-primary);">
                                 <span class="line-wrapper">
-                                    <span class="line" style="font-size: 1.5rem;">Tugas Akhir Mobile Programming</span>
+                                    <span class="line" style="font-size: 1.5rem;">Tugas Akhir Mobile
+                                        Programming</span>
                                 </span>
                             </h5>
                             <p class="mb-0 description-animation" style="color: var(--bs-primary);">
@@ -382,11 +431,6 @@
                                                     <td class="text-center">
                                                         @if ($k->isOwnedByUser(Auth::id()))
                                                             @if ($k->status == 'Diterima')
-                                                                {{-- Show Ganti Jadwal button if:
-                1. Status is Diterima
-                2. No pending request exists
-                3. Current jadwal is in normal status or no jadwal set
-            --}}
                                                                 @if (!$k->requested_jadwal_id)
                                                                     <a href="{{ route('mahasiswa.jadwalForm', $k->id) }}"
                                                                         class="set-jadwal-btn">
@@ -627,6 +671,7 @@
             width: 20px;
             margin-left: 4px;
         }
+
         .set-jadwal-btn-done:hover .btn-icon {
             opacity: 1;
             width: 20px;

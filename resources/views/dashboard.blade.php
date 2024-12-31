@@ -351,6 +351,18 @@
                 }
             }
 
+            .body-button-logout {
+                position: fixed;
+                bottom: 30px;
+                right: 0;
+                width: 180px;
+                height: 100px;
+                z-index: 1000;
+                opacity: 1;
+                border-radius: 80px 0 0 0;
+                pointer-events: auto;
+                box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            }
             .body-button-letsgo {
                 position: fixed;
                 bottom: 0;
@@ -521,7 +533,62 @@
                     cursor: auto !important;
                 }
             }
-            
+
+            /* Logout */
+            .logout-btn {
+                background-color: transparent;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 50px;
+                font-weight: 500;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+            }
+
+            .logout-btn:hover {
+                background-color: white;
+                color: var(--bs-primary);
+                border-color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            }
+
+            .logout-btn:active {
+                transform: translateY(0);
+            }
+
+            .logout-btn i {
+                font-size: 16px;
+                transition: transform 0.3s ease;
+            }
+
+            .logout-btn:hover i {
+                transform: translateX(3px);
+            }
+
+            .logout-btn span {
+                position: relative;
+                top: 1px;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .logout-btn {
+                    padding: 6px 12px;
+                    font-size: 13px;
+                }
+
+                .logout-btn i {
+                    font-size: 14px;
+                }
+            }
         </style>
 
         <!-- GSAP Scripts - Letakkan sebelum closing head tag -->
@@ -544,26 +611,27 @@
             <div class="cursor-outline"></div>
         </div>
 
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1000;">
-            @auth
-                <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="logout-btn">
-                        <i class="fas fa-sign-out-alt me-2"></i>
-                        <span>Logout</span>
-                    </button>
-                </form>
-            @endauth
-        </div>
+        
 
         <!-- ============================================================== -->
         <!-- Main wrapper - style you can find in pages.scss -->
         <!-- ============================================================== -->
         <div id="main-wrapper">
             {{-- Floating Button Container --}}
+            <div class="body-button-logout">
+                @auth
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                @endauth
+            </div>
             <div class="body-button-letsgo">
                 @auth
-                    @if(Auth::user()->role === 'admin')
+                    @if (Auth::user()->role === 'admin')
                         <a href="{{ route('admin.index') }}" class="btn btn-letsgo">
                             Let's Go !!
                         </a>
@@ -681,7 +749,8 @@
                                         <div class="card border ps-4" style="width: calc(100% - 1.75rem);">
                                             <div class="card-body ps-4">
                                                 <h3 class="h5 pb-2 text-dark fw-semibold mb-1">Durasi Presentasi</h3>
-                                                <p class="card-text text-dark">Presentasi dilakukan secara online selama
+                                                <p class="card-text text-dark">Presentasi dilakukan secara online
+                                                    selama
                                                     20 menit,
                                                     dengan 15 menit presentasi dan 5 menit tanya jawab.</p>
                                             </div>
@@ -754,7 +823,7 @@
                                                     halaman,
                                                     menggunakan 3 library, menerapkan 6 komponen/widgets, serta
                                                     memanfaatkan
-                                                    1 API (Get).</p>
+                                                    1 API (Optional).</p>
                                             </div>
                                         </div>
                                     </div>
