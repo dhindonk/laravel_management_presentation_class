@@ -10,15 +10,11 @@ Sistem manajemen presentasi yang dirancang khusus untuk memudahkan proses pengaj
 - 🎯 Sistem penilaian terintegrasi
 - 📊 Dashboard monitoring
 - 🔄 Status tracking presentasi
-- 🎥 Integrasi Google Meet untuk presentasi online
 
 ## 💪 Keunggulan
 - 🚀 Antarmuka modern dan responsif
 - ⚡ Performa tinggi dan cepat
-- 🛡️ Sistem keamanan yang kuat
 - 🎨 Design yang intuitif
-- 📱 Mobile-friendly
-- 🔄 Real-time status update
 
 ## 🎯 Tujuan
 - Memudahkan manajemen jadwal presentasi
@@ -38,15 +34,13 @@ Sistem manajemen presentasi yang dirancang khusus untuk memudahkan proses pengaj
 - 🕒 Pengajuan jadwal yang fleksibel
 - 📱 Tracking status real-time
 - 🔄 Update progres yang mudah
-- 📊 Transparansi penilaian
 
 ## 🛠️ Tech Stack
-- 💻 Laravel 10
+- 💻 Laravel 11
 - 🎨 Bootstrap 5
 - 🔥 GSAP Animation
 - 📱 Responsive Design
 - 🗄️ MySQL Database
-- ☁️ Google Meet Integration
 
 ## 📝 Penggunaan
 1. Clone repository
