@@ -26,13 +26,13 @@ class AdminController extends Controller
                 return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
             }
 
-            if ($kelompok->mode) {
-                // For online mode, validate link
-                request()->validate([
-                    'link' => 'required'
-                ]);
-                $kelompok->link = request('link');
-            }
+            // if ($kelompok->mode) {
+            //     // For online mode, validate link
+            //     request()->validate([
+            //         'link' => 'required'
+            //     ]);
+            //     $kelompok->link = request('link');
+            // }
 
             $kelompok->status = 'Diterima';
             $kelompok->save();

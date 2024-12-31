@@ -107,26 +107,34 @@ class KelompokController extends Controller
 
     public function showJadwalForm($id)
     {
-        $kelompok = Kelompok::findOrFail($id);
+        try {
+            $kelompok = Kelompok::findOrFail($id);
+            $authUserId = (int) Auth::id();
+            $kelompokUserId = (int) $kelompok->user_id;
 
-        // Cek apakah kelompok milik user yang login
-        if ($kelompok->user_id !== Auth::user()->id) {
+            // Cek apakah kelompok milik user yang login
+            if ($kelompokUserId !== $authUserId) {
+                return redirect()->route('mahasiswa.index')
+                    ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
+            }
+
+            $labs = Lab::all();
+            $jadwals = JadwalPresentasi::all();
+
+            // Ambil data jadwal yang sudah digunakan
+            $usedJadwals = Kelompok::where('status', 'Diterima')
+                ->whereNotNull('jadwal_presentasi_id')
+                ->pluck('jadwal_presentasi_id')
+                ->toArray();
+
+            return view('mahasiswa.jadwal', compact('kelompok', 'labs', 'jadwals', 'usedJadwals'));
+        } catch (\Exception $e) {
+            // \Log::error('Error in showJadwalForm: ' . $e->getMessage());
             return redirect()->route('mahasiswa.index')
-                ->with('error', 'Anda tidak memiliki akses ke kelompok ini.');
+                ->with('error', 'Terjadi kesalahan saat mengakses form jadwal.');
         }
-
-        $labs = Lab::all();
-        $jadwals = JadwalPresentasi::all();
-
-        // Ambil data jadwal yang sudah digunakan
-        $usedJadwals = Kelompok::where('status', 'Diterima') // Pastikan status "Diterima" sudah benar
-            ->whereNotNull('jadwal_presentasi_id')
-            ->pluck('jadwal_presentasi_id') // Hanya ambil ID jadwal
-            ->toArray(); // Konversi ke array
-
-
-        return view('mahasiswa.jadwal', compact('kelompok', 'labs', 'jadwals', 'usedJadwals'));
     }
+
     public function updateJadwal(Request $request, $id)
     {
         try {

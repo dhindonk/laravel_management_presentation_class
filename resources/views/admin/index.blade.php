@@ -432,34 +432,24 @@
     </script> --}}
     {{--  --}}
     <script>
-        function approveKelompok(url, isOnline) {
-            if (isOnline) {
-                // For online mode, ask for GMeet link first
-                Swal.fire({
-                    title: 'Masukkan Link Google Meet',
-                    input: 'text',
-                    inputLabel: 'Link untuk presentasi online',
-                    inputPlaceholder: 'https://meet.google.com/...',
-                    showCancelButton: true,
-                    confirmButtonText: 'Setujui',
-                    cancelButtonText: 'Batal',
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'Link Google Meet harus diisi!';
-                        }
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        submitApproval(url, result.value);
-                    }
-                });
-            } else {
-                // For offline mode, proceed directly
-                submitApproval(url);
-            }
+        function approveKelompok(url) {
+            Swal.fire({
+                title: 'Setujui Pengajuan?',
+                text: "Anda yakin ingin menyetujui pengajuan ini?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Setujui!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitApproval(url);
+                }
+            });
         }
 
-        function submitApproval(url, link = null) {
+        function submitApproval(url) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = url;
@@ -477,15 +467,6 @@
             method.name = '_method';
             method.value = 'PUT';
             form.appendChild(method);
-
-            // Add link if provided
-            if (link) {
-                const linkInput = document.createElement('input');
-                linkInput.type = 'hidden';
-                linkInput.name = 'link';
-                linkInput.value = link;
-                form.appendChild(linkInput);
-            }
 
             document.body.appendChild(form);
             form.submit();
