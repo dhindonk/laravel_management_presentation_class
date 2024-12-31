@@ -52,4 +52,4 @@ Sistem manajemen presentasi yang dirancang khusus untuk memudahkan proses pengaj
 Kontribusi selalu terbuka untuk pengembangan sistem ini.
 
 ## 📫 Kontak
-Untuk informasi lebih lanjut, hubungi kami di email@example.com
+Untuk informasi lebih lanjut, hubungi saya di mfahdin12@gmail.com
