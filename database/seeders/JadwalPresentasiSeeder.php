@@ -11,21 +11,30 @@ class JadwalPresentasiSeeder extends Seeder
     {
         $jadwals = [
             [
-                'tanggal_presentasi' => '2024-01-01',
-                'waktu_presentasi' => '08:00:00'
-            ],
-            [
-                'tanggal_presentasi' => '2024-01-01',
-                'waktu_presentasi' => '10:00:00'
-            ],
-            [
-                'tanggal_presentasi' => '2024-01-01',
+                // Gab A
+                'tanggal_presentasi' => '2024-12-31',
                 'waktu_presentasi' => '13:00:00'
+            ],
+            [
+                // Gab B
+                'tanggal_presentasi' => '2025-01-02',
+                'waktu_presentasi' => '07:30:00'
+            ],
+            [
+                // Gab C
+                'tanggal_presentasi' => '2024-12-31',
+                'waktu_presentasi' => '10:30:00'
+            ],
+            [
+                // Gab D
+                'tanggal_presentasi' => '2024-12-31',
+                'waktu_presentasi' => '07:30:00'
             ],
         ];
 
         foreach ($jadwals as $jadwal) {
             JadwalPresentasi::create($jadwal);
         }
+        
     }
 }

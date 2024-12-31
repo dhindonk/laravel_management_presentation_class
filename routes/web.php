@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
         Route::put('/admin/approve/{id}', [AdminController::class, 'approve'])->name('admin.approve');
         Route::put('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
+        Route::put('/admin/approve-jadwal-update/{id}', [AdminController::class, 'approveJadwalChange'])->name('admin.jadwalApprove');
+        Route::put('/admin/reject-jadwal-update/{id}', [AdminController::class, 'rejectJadwalChange'])->name('admin.jadwalReject');
         Route::get('/admin/jadwal', [AdminController::class, 'jadwal'])->name('admin.jadwalForm');
         Route::post('/admin/jadwal/store', [AdminController::class, 'storeJadwal'])->name('admin.storeJadwal');
         Route::delete('/admin/jadwal/{id}', [AdminController::class, 'destroyJadwal'])->name('admin.destroyJadwal');

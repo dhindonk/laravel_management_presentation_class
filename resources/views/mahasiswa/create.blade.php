@@ -5,6 +5,119 @@
         .text-gradient {
             color: white !important;
         }
+
+        /* Mode Togle */
+        .mode-toggle {
+            position: relative;
+            background: #f8f9fa;
+            border: 2px solid var(--bs-primary);
+            border-radius: 50px;
+            padding: 4px;
+            display: flex;
+            cursor: pointer;
+            width: fit-content;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-option {
+            position: relative;
+            padding: 8px 24px;
+            font-weight: 600;
+            color: var(--bs-primary);
+            z-index: 2;
+            /* Increased z-index */
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .toggle-option:not(.active) {
+            opacity: 0.6;
+        }
+
+        .toggle-option.active {
+            color: white;
+            opacity: 1;
+        }
+
+        .slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            bottom: 4px;
+            width: calc(50% - 4px);
+            background: var(--bs-primary);
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1;
+            /* Lower than toggle-option */
+        }
+
+        .mode-toggle[data-mode="true"] .slider {
+            transform: translateX(100%);
+            /* Changed from left to transform */
+        }
+
+        /* form */
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background-color: #09191F;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(9, 25, 31, 0.3);
+        }
+
+        .btn-upload:active {
+            transform: translateY(0);
+            background-color: #061216;
+        }
+
+        .upload-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .text-info {
+            color: #17a2b8;
+        }
+
+        .submit-btn {
+            background: #09191F;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #efefef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(9, 25, 31, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+            background: #061216;
+        }
+
+        .submit-text {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 @endsection
 
@@ -26,9 +139,28 @@
         </div>
 
         {{-- rounded 10px --}}
-        <form id="submissionForm" style="border-radius: 15px !important" class="p-4 bg-light border rounded col-md-8 mx-auto" action="{{ route('mahasiswa.store') }}"
-            method="POST">
+        <form id="submissionForm" style="border-radius: 15px !important" class="p-4 bg-light border rounded col-md-8 mx-auto"
+            action="{{ route('mahasiswa.store') }}" method="POST">
             @csrf
+
+            {{-- Mode Switch Toggle --}}
+            <div class="mb-4">
+                <label class="form-label d-block">Mode Presentasi</label>
+                <div class="mode-toggle-wrapper">
+                    <input type="hidden" name="mode" id="modeInput" value="false" required>
+                    <div class="mode-toggle" data-mode="false">
+                        <div class="toggle-option offline active" data-mode="false">
+                            <i class="fas fa-building me-2"></i>
+                            Offline
+                        </div>
+                        <div class="toggle-option online" data-mode="true">
+                            <i class="fas fa-video me-2"></i>
+                            Online
+                        </div>
+                        <div class="slider"></div>
+                    </div>
+                </div>
+            </div>
             <!-- Judul Proyek -->
             <div class="mb-3">
                 <label for="judul_proyek" class="form-label">Judul Proyek</label>
@@ -75,7 +207,8 @@
                 <select id="kelas_id" name="kelas_id" class="form-select" required>
                     <option value="" disabled selected>Pilih Kelas</option>
                     @foreach ($kelas as $k)
-                        <option value="{{ $k->id }}" data-penanggung-jawab="{{ $k->penanggung_jawab }}">{{ $k->nama_kelas }}</option>
+                        <option value="{{ $k->id }}" data-penanggung-jawab="{{ $k->penanggung_jawab }}">
+                            {{ $k->nama_kelas }}</option>
                     @endforeach
                 </select>
             </div>
@@ -86,25 +219,108 @@
                 <input type="text" id="penanggung_jawab" name="penanggung_jawab" class="form-control" readonly>
             </div>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const kelasSelect = document.getElementById('kelas_id');
-                    const penanggungJawabInput = document.getElementById('penanggung_jawab');
+            {{-- Petunjuk Upload Project --}}
+            <div class="mb-3">
+                <label for="upload_project" class="form-label">Upload Project</label>
+                <p>Silakan upload file project Anda di link berikut:</p>
+                <a href="https://drive.google.com/drive/folders/1ZGLdRTIQ0emPIFnzQekooyB_eKBqcpXt" target="_blank"
+                    class="btn btn-outline-primary btn-upload">
+                    <span class="upload-text">Upload Project</span>
+                </a>
+                <div class="form-check mt-3">
+                    <input type="checkbox" id="project_uploaded" name="project_uploaded" class="form-check-input"
+                        required>
+                    <label for="project_uploaded" class="form-check-label">Saya sudah mengunggah project saya</label>
+                </div>
+                <p class="mt-2 text-info">* File harus berupa .zip dengan nama file: <strong>Judul Project_Gab A / B /
+                        C atau D</strong></p>
+            </div>
 
-                    kelasSelect.addEventListener('change', function() {
-                        const selectedOption = kelasSelect.options[kelasSelect.selectedIndex];
-                        penanggungJawabInput.value = selectedOption.getAttribute('data-penanggung-jawab');
-                    });
-                });
-            </script>
 
             <!-- Submit Button -->
-            <button type="submit" id="submitBtn" class="btn w-100 position-relative overflow-hidden submit-btn">
-                <span class="submit-text">Submit</span>
+            <button type="submit" id="submitBtn" class="btn w-100 position-relative overflow-hidden submit-btn"
+                disabled>
+                <span class="submit-text">Ajukan</span>
             </button>
         </form>
     </div>
 
+    {{-- Mode Togle --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modeToggle = document.querySelector('.mode-toggle');
+            const toggleOptions = document.querySelectorAll('.toggle-option');
+            const modeInput = document.getElementById('modeInput');
+
+            toggleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const mode = this.dataset.mode === 'true'; // Convert to boolean
+
+                    // Update active state
+                    toggleOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update hidden input with boolean string
+                    modeInput.value = mode.toString();
+
+                    // Update toggle state
+                    modeToggle.dataset.mode = mode.toString();
+
+                    // GSAP Animation for click
+                    gsap.to('.slider', {
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        x: mode ? '100%' : '0%'
+                    });
+
+                    // Validate form after change
+                    validateForm();
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const kelasSelect = document.getElementById('kelas_id');
+            const penanggungJawabInput = document.getElementById('penanggung_jawab');
+
+            kelasSelect.addEventListener('change', function() {
+                const selectedOption = kelasSelect.options[kelasSelect.selectedIndex];
+                penanggungJawabInput.value = selectedOption.getAttribute('data-penanggung-jawab');
+            });
+
+            const form = document.getElementById('submissionForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const requiredInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+            const projectUploadedCheckbox = document.getElementById('project_uploaded');
+
+            function validateForm() {
+                let isValid = true;
+
+                requiredInputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                    }
+                });
+
+                if (!projectUploadedCheckbox.checked) {
+                    isValid = false;
+                }
+
+                submitBtn.disabled = !isValid;
+            }
+
+            requiredInputs.forEach(input => {
+                input.addEventListener('input', validateForm);
+            });
+
+            projectUploadedCheckbox.addEventListener('change', validateForm);
+
+            validateForm(); // Initial validation check
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const jadwalSelect = document.getElementById('jadwal_presentasi_id');
@@ -146,6 +362,8 @@
         });
     </script>
 
+
+    {{-- anggota --}}
     <script>
         function addAnggota() {
             const anggotaContainer = document.getElementById('anggotaContainer');
@@ -213,6 +431,12 @@
                 }
             });
 
+            // Cek checkbox project_uploaded
+            const projectUploadedCheckbox = document.getElementById('project_uploaded');
+            if (!projectUploadedCheckbox.checked) {
+                isValid = false;
+            }
+
             // Anggota adalah opsional, jadi tidak perlu divalidasi
             submitBtn.disabled = !isValid;
         }
@@ -221,6 +445,9 @@
         document.querySelectorAll('#submissionForm input, #submissionForm select').forEach(input => {
             input.addEventListener('input', validateForm);
         });
+
+        // Panggil fungsi validasi saat ada perubahan di checkbox
+        document.getElementById('project_uploaded').addEventListener('change', validateForm);
 
         // Validasi ketika form disubmit
         document.getElementById('submissionForm').onsubmit = function(e) {
@@ -324,36 +551,4 @@
             });
         });
     </script>
-
-    <style>
-        .submit-btn {
-            background: #09191F;
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn:hover:not(:disabled) {
-            background: #efefef;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(9, 25, 31, 0.3);
-        }
-
-        .submit-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .submit-btn:active:not(:disabled) {
-            transform: translateY(0);
-            background: #061216;
-        }
-
-        .submit-text {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
 @endsection

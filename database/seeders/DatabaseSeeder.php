@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             KelasSeeder::class,
             // LabSeeder::class,
-            // JadwalPresentasiSeeder::class
+            JadwalPresentasiSeeder::class
         ]);
     }
 }

@@ -9,7 +9,7 @@ class JadwalPresentasi extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['tanggal_presentasi', 'waktu_presentasi'];
+    protected $fillable = ['tanggal_presentasi', 'waktu_presentasi', 'status'];
 
     // Relasi ke model Kelompok
     public function kelompok()

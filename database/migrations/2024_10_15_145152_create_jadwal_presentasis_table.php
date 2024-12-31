@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('jadwal_presentasis', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal_presentasi');
+            $table->enum('status', ['normal', 'pending', 'approved', 'rejected'])->default('normal');
             $table->time('waktu_presentasi');
             $table->timestamps();
         });

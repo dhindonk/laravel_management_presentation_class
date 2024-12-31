@@ -1,5 +1,59 @@
 @extends('layouts.app')
 
+@section('style')
+    <style>
+        /* Mode Togle */
+        .mode-toggle {
+            position: relative;
+            background: #f8f9fa;
+            border: 2px solid var(--bs-primary);
+            border-radius: 50px;
+            padding: 4px;
+            display: flex;
+            width: fit-content;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-option {
+            position: relative;
+            padding: 8px 24px;
+            font-weight: 600;
+            color: var(--bs-primary);
+            z-index: 2;
+            /* Increased z-index */
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .toggle-option:not(.active) {
+            color: white;
+            opacity: 1;
+        }
+
+        .toggle-option.active {
+            opacity: 0.6;
+        }
+
+        .slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            bottom: 4px;
+            width: calc(50% - 4px);
+            background: var(--bs-primary);
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1;
+            /* Lower than toggle-option */
+        }
+
+        .mode-toggle[data-mode="false"] .slider {
+            transform: translateX(100%);
+            /* Changed from left to transform */
+        }
+    </style>
+@endsection
 @section('content')
     <div class="container mt-4">
         <div class="d-flex justify-content-start mb-3">
@@ -22,7 +76,25 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="mb-3 d-flex flex-column">
+                            {{-- Mode Switch Toggle --}}
+                            <div class="mb-4">
+                                <label class="form-label d-block">Mode Presentasi</label>
+                                <div class="mode-toggle-wrapper">
+                                    <input type="hidden" id="modeInput" value="true" disabled>
+                                    <div class="mode-toggle" data-mode="false">
+                                        <div class="toggle-option offline active" data-mode="false">
+                                            <i class="fas fa-building me-2"></i>
+                                            Offline
+                                        </div>
+                                        <div class="toggle-option online" data-mode="true">
+                                            <i class="fas fa-video me-2"></i>
+                                            Online
+                                        </div>
+                                        <div class="slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <div class="mb-3 d-flex flex-column">
                                 <label for="lab_id" class="form-label">
                                     <i class="fas fa-flask me-1"></i> Link Gmeet
                                 </label>
@@ -31,7 +103,7 @@
                                         {{ $kelompok->link }}
                                     </div>
                                 </a>
-                            </div>
+                            </div> --}}
 
                             <div class="mb-4">
                                 <label for="jadwal_presentasi_id" class="form-label">
@@ -39,7 +111,7 @@
                                 </label>
                                 <div class="select-wrapper">
                                     <select name="jadwal_presentasi_id" id="jadwal_presentasi_id"
-                                        class="form-select custom-select" required>
+                                        class="form-select custom-select" style="cursor: pointer" required>
                                         <option value="">Pilih Jadwal</option>
                                         @foreach ($jadwals as $jadwal)
                                             <option value="{{ $jadwal->id }}">

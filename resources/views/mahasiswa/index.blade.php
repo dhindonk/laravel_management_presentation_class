@@ -250,7 +250,7 @@
                                         <th>Judul Proyek</th>
                                         <th>Ketua & Anggota</th>
                                         <th>Jadwal Presentasi</th>
-                                        <th>Link Gmeet</th>
+                                        <th>Lab / Link Gmeet</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -268,6 +268,7 @@
                                     @else
                                         @foreach ($kelompok as $k)
                                             <tr class="project-row {{ $k->user_id === Auth::id() ? 'table-active' : '' }}">
+                                                {{-- judul project --}}
                                                 <td class="align-middle">
                                                     {{ $k->judul_proyek }}
                                                     @if ($k->user_id === Auth::id())
@@ -278,6 +279,7 @@
                                                             height="20">
                                                     @endif
                                                 </td>
+                                                {{-- ketua --}}
                                                 <td>
                                                     <strong>{{ $k->ketua }} [ {{ $k->npm_ketua }} ]</strong>
                                                     <br>
@@ -303,39 +305,58 @@
                                                         @endphp
                                                     @endif
                                                 </td>
-
+                                                {{-- jadwal --}}
                                                 <td class="text-center">
-                                                    @if ($k->jadwalPresentasi)
-                                                        {{ \Carbon\Carbon::parse($k->jadwalPresentasi->tanggal_presentasi)->isoFormat('dddd, D MMMM Y') }}
-                                                        <br>
-                                                        <small>
-                                                            {{ $k->jadwalPresentasi->waktu_presentasi }}
-                                                        </small>
+                                                    @if ($k->status == 'Pending')
+                                                        <span class="badge bg-warning text-dark">Pending</span>
                                                     @else
-                                                        <span class="badge bg-secondary">Belum diatur</span>
+                                                        @if ($k->jadwalPresentasi)
+                                                            {{ \Carbon\Carbon::parse($k->jadwalPresentasi->tanggal_presentasi)->isoFormat('dddd, D MMMM Y') }}
+                                                            <br>
+                                                            <small>
+                                                                {{ $k->jadwalPresentasi->waktu_presentasi }}
+                                                            </small>
+                                                        @else
+                                                            <span class="badge bg-secondary">No Data</span>
+                                                        @endif
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    @if ($k->isOwnedByUser(Auth::id()))
-                                                        @if ($k->selesai == 1)
-                                                            <span class="badge bg-secondary">Link ditutup</span>
-                                                        @else
-                                                            @if ($k->jadwalPresentasi)
-                                                                @if ($k->link)
-                                                                    <a href="{{ $k->link }}" class="badge bg-behance"
-                                                                        style="color:white !important" target="_blank">Klik
-                                                                        to Open</a>
+                                                {{-- link / lab --}}
+                                                @if ($k->status == 'Pending')
+                                                    <td>
+                                                        <span class="badge bg-warning text-dark">Pending</span>
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        @if ($k->isOwnedByUser(Auth::id()))
+                                                            @if ($k->mode)
+                                                                @if ($k->selesai == 1)
+                                                                    <span class="badge bg-secondary">Link ditutup</span>
                                                                 @else
-                                                                    <span class="badge bg-secondary">Belum ada link</span>
+                                                                    @if ($k->jadwalPresentasi)
+                                                                        @if ($k->link)
+                                                                            <a href="{{ $k->link }}"
+                                                                                class="badge bg-behance"
+                                                                                style="color:white !important"
+                                                                                target="_blank">Klik
+                                                                                to Open</a>
+                                                                        @else
+                                                                            <span class="badge bg-secondary">Belum ada
+                                                                                link</span>
+                                                                        @endif
+                                                                    @else
+                                                                        <span class="badge bg-secondary">No Data</span>
+                                                                    @endif
                                                                 @endif
                                                             @else
-                                                                <span class="badge bg-secondary">Belum atur jadwal</span>
+                                                                <span>Lab Sistem Cerdas</span>
                                                             @endif
+                                                        @else
+                                                            <span class="badge bg-light text-dark">No Access</span>
                                                         @endif
-                                                    @else
-                                                        <span class="badge bg-light text-dark">No Access</span>
-                                                    @endif
-                                                </td>
+                                                    </td>
+                                                @endif
+                                                {{-- status --}}
                                                 <td class="text-center">
                                                     @if ($k->status == 'Pending')
                                                         <span class="badge bg-warning text-dark">Pending</span>
@@ -345,25 +366,48 @@
                                                         <span class="badge bg-danger">Ditolak</span>
                                                     @endif
                                                 </td>
-                                                <td class="text-center">
-                                                    @if ($k->isOwnedByUser(Auth::id()))
-                                                        @if ($k->jadwal_lab_opened && !$k->jadwal_presentasi_id)
-                                                            <a href="{{ route('mahasiswa.jadwalForm', $k->id) }}"
-                                                                class="set-jadwal-btn">
-                                                                <span class="btn-text">Set Jadwal</span>
-                                                                <span class="btn-icon">
-                                                                    <i class="fas fa-calendar-alt"></i>
-                                                                </span>
-                                                            </a>
+                                                {{-- aksi --}}
+
+                                                @if ($k->selesai == 1)
+                                                    <td class="text-center">
+                                                        <div class="set-jadwal-btn-done">
+                                                            <span class="btn-text text-white">
+                                                                Presentasi Selesai
+                                                            </span>
+                                                            <span class="btn-icon">
+                                                                <i class="fas fa-check"></i>
+                                                        </div>
+                                                    </td>
+                                                @else
+                                                    <td class="text-center">
+                                                        @if ($k->isOwnedByUser(Auth::id()))
+                                                            @if ($k->status == 'Diterima')
+                                                                {{-- Show Ganti Jadwal button if:
+                1. Status is Diterima
+                2. No pending request exists
+                3. Current jadwal is in normal status or no jadwal set
+            --}}
+                                                                @if (!$k->requested_jadwal_id)
+                                                                    <a href="{{ route('mahasiswa.jadwalForm', $k->id) }}"
+                                                                        class="set-jadwal-btn">
+                                                                        <span class="btn-text">
+                                                                            {{ $k->jadwal_presentasi_id ? 'Ganti Jadwal' : 'Set Jadwal' }}
+                                                                        </span>
+                                                                        <span class="btn-icon">
+                                                                            <i class="fas fa-calendar-alt"></i>
+                                                                        </span>
+                                                                    </a>
+                                                                @else
+                                                                    <span class="badge bg-warning">Menunggu
+                                                                        Persetujuan</span>
+                                                                @endif
+                                                            @endif
+                                                        @else
+                                                            <span class="badge bg-light text-dark">No Access</span>
                                                         @endif
-                                                        <a href="{{ route('mahasiswa.edit', $k->id) }}"
-                                                            class="btn btn-warning btn-sm ms-1">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                    @else
-                                                        <span class="badge bg-light text-dark">No Access</span>
-                                                    @endif
-                                                </td>
+                                                    </td>
+                                                @endif
+
                                             </tr>
                                         @endforeach
                                     @endif
@@ -513,6 +557,55 @@
             left: 100%;
         }
 
+        /* btn selesai */
+        .set-jadwal-btn-done {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 20px;
+            background: linear-gradient(45deg, #09191F, #1e3a44);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            user-select: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(9, 25, 31, 0.2);
+            transform: scale(0.8);
+        }
+
+        .set-jadwal-btn-done:hover {
+            transform: translateY(-2px) scale(.8);
+            box-shadow: 0 6px 20px rgba(9, 25, 31, 0.4);
+            color: white;
+            background: linear-gradient(45deg, #1e3a44, #09191F);
+        }
+
+        .set-jadwal-btn-done:active {
+            transform: translateY(0);
+            background: linear-gradient(45deg, #061216, #152b33);
+        }
+
+        .set-jadwal-btn-done::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.6),
+                    transparent);
+            transition: all 0.6s;
+        }
+
+        .set-jadwal-btn-done:hover::before {
+            left: 100%;
+        }
+
         .btn-text {
             position: relative;
             z-index: 1;
@@ -530,6 +623,11 @@
         }
 
         .set-jadwal-btn:hover .btn-icon {
+            opacity: 1;
+            width: 20px;
+            margin-left: 4px;
+        }
+        .set-jadwal-btn-done:hover .btn-icon {
             opacity: 1;
             width: 20px;
             margin-left: 4px;

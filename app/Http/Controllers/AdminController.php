@@ -12,7 +12,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $kelompok = Kelompok::with(['nilais', 'kelas', 'jadwalPresentasi']) 
+        $kelompok = Kelompok::with(['nilais', 'kelas', 'jadwalPresentasi'])
             ->orderBy('created_at', 'desc')
             ->get();
         return view('admin.index', compact('kelompok'));
@@ -20,15 +20,28 @@ class AdminController extends Controller
 
     public function approve($id)
     {
-        $kelompok = Kelompok::find($id);
-        if ($kelompok) {
+        try {
+            $kelompok = Kelompok::find($id);
+            if (!$kelompok) {
+                return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
+            }
+
+            if ($kelompok->mode) {
+                // For online mode, validate link
+                request()->validate([
+                    'link' => 'required'
+                ]);
+                $kelompok->link = request('link');
+            }
+
             $kelompok->status = 'Diterima';
             $kelompok->save();
-            return redirect()->back()->with('success', 'Pengajuan di-ACC.');
-        }
-        return redirect()->back()->with('error', 'Pengajuan tidak ditemukan.');
-    }
 
+            return redirect()->back()->with('success', 'Pengajuan berhasil disetujui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyetujui pengajuan.');
+        }
+    }
     // Tolak pengajuan
     public function reject($id)
     {
@@ -113,8 +126,6 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Jadwal berhasil dihapus.');
     }
 
-
-
     public function destroy($id)
     {
         $kelompok = Kelompok::find($id);
@@ -145,5 +156,60 @@ class AdminController extends Controller
             ->update(['jadwal_lab_opened' => true]);
 
         return redirect()->back()->with('success', 'Pengajuan jadwal dan lab telah dibuka untuk semua kelompok yang diterima.');
+    }
+
+    public function approveJadwalChange($id)
+    {
+        try {
+            $kelompok = Kelompok::find($id);
+            if (!$kelompok) {
+                return redirect()->back()->with('error', 'Kelompok tidak ditemukan.');
+            }
+
+            // Validate link
+            request()->validate([
+                'link' => 'required'
+            ]);
+
+            // Update kelompok with new jadwal and link
+            $kelompok->jadwal_presentasi_id = $kelompok->requested_jadwal_id;
+            $kelompok->requested_jadwal_id = null;
+            $kelompok->link = request('link'); // Add link
+            $kelompok->mode = true; // Set to online mode
+            $kelompok->save();
+
+            // Update jadwal status
+            if ($kelompok->jadwalPresentasi) {
+                $kelompok->jadwalPresentasi->status = 'approved';
+                $kelompok->jadwalPresentasi->save();
+            }
+
+            return redirect()->back()->with('success', 'Perubahan jadwal disetujui dan link telah ditambahkan.');
+        } catch (\Exception $e) {
+            // \Log::error('Error in approveJadwalChange: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyetujui perubahan jadwal.');
+        }
+    }
+
+    public function rejectJadwalChange($id)
+    {
+        $kelompok = Kelompok::find($id);
+        if (!$kelompok || !$kelompok->requested_jadwal_id) {
+            return redirect()->back()->with('error', 'Permintaan perubahan jadwal tidak ditemukan.');
+        }
+
+        // Get the requested jadwal
+        $jadwal = JadwalPresentasi::find($kelompok->requested_jadwal_id);
+        if ($jadwal) {
+            // Reset jadwal status
+            $jadwal->status = 'rejected';
+            $jadwal->save();
+        }
+
+        // Reset kelompok request
+        $kelompok->requested_jadwal_id = null;
+        $kelompok->save();
+
+        return redirect()->back()->with('success', 'Perubahan jadwal ditolak.');
     }
 }

@@ -18,9 +18,11 @@ class Kelompok extends Model
         'npm_anggota',
         'lab_id',
         'jadwal_presentasi_id',
+        'requested_jadwal_id',
         'kelas_id',
         'status',
         'selesai',
+        'mode',
         'jadwal_lab_opened',
         'link',
     ];

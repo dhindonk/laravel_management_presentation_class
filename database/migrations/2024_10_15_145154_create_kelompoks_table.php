@@ -22,9 +22,11 @@ return new class extends Migration
             $table->json('npm_anggota')->nullable();
             $table->foreignId('kelas_id')->constrained('kelas');
             $table->foreignId('jadwal_presentasi_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('requested_jadwal_id')->nullable()->constrained('jadwal_presentasis')->onDelete('set null');
             $table->foreignId('lab_id')->nullable()->constrained('labs');
             $table->enum('status', ['Pending', 'Diterima', 'Ditolak'])->default('Pending');
             $table->boolean('selesai')->default(false);
+            $table->boolean('mode')->default(false);
             $table->boolean('jadwal_lab_opened')->default(false);
             $table->timestamps();
         });

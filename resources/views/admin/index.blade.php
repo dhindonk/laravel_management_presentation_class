@@ -90,7 +90,51 @@
                                         <span class="badge bg-secondary">Belum diatur</span>
                                     @endif
                                 </td>
+
+                                {{-- jadwal --}}
                                 <td class="text-center text-white">
+                                    @if ($k->jadwalPresentasi)
+                                        {{ \Carbon\Carbon::parse($k->jadwalPresentasi->tanggal_presentasi)->isoFormat('dddd, D MMMM Y') }}
+                                        <br>
+                                        <small>{{ $k->jadwalPresentasi->waktu_presentasi }}</small>
+                                    @endif
+
+                                    {{-- Show pending jadwal request for both online and offline mode --}}
+                                    @if ($k->requested_jadwal_id)
+                                        <div class="mt-2">
+                                            <div class="alert alert-warning p-2 mb-2">
+                                                <small>
+                                                    Permintaan {{ $k->mode ? 'Online' : 'Offline' }} ke:
+                                                </small><br>
+                                                @php
+                                                    $requestedJadwal = \App\Models\JadwalPresentasi::find(
+                                                        $k->requested_jadwal_id,
+                                                    );
+                                                @endphp
+                                                @if ($requestedJadwal)
+                                                    <strong>
+                                                        {{ \Carbon\Carbon::parse($requestedJadwal->tanggal_presentasi)->isoFormat('dddd, D MMMM Y') }}
+                                                        {{ $requestedJadwal->waktu_presentasi }}
+                                                    </strong>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="approveJadwalChange('{{ route('admin.jadwalApprove', $k->id) }}', {{ $k->mode }})">
+                                                    <i class="fas fa-check"></i> Setujui
+                                                </button>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="rejectJadwalChange('{{ route('admin.jadwalReject', $k->id) }}')">
+                                                    <i class="fas fa-times"></i> Tolak
+                                                </button>
+                                            </div>
+                                    @endif
+        </div>
+    @elseif(!$k->jadwalPresentasi)
+        <span class="badge bg-secondary">Belum diatur</span>
+        @endif
+        </td>
+
+        {{-- <td class="text-center text-white">
                                     @if ($k->jadwalPresentasi)
                                         {{ \Carbon\Carbon::parse($k->jadwalPresentasi->tanggal_presentasi)->isoFormat('dddd, D MMMM Y') }}
                                         <br>
@@ -100,73 +144,93 @@
                                     @else
                                         <span class="badge bg-secondary">Belum diatur</span>
                                     @endif
-                                </td>
-                                <td class="text-center">
-                                    @if ($k->status == 'Pending')
-                                        <span class="badge bg-warning text-dark">Pending</span>
-                                    @elseif($k->status == 'Diterima')
-                                        <span class="badge bg-success">Diterima</span>
-                                    @elseif($k->status == 'Ditolak')
-                                        <span class="badge bg-danger">Ditolak</span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if ($k->nilais->isNotEmpty())
-                                        @foreach ($k->nilais as $nilai)
-                                            <div>
-                                                <strong class="text-white">{{ $nilai->nama_penilai }}</strong><br>
-                                                <span class="badge bg-success">{{ $nilai->penilaian_presentasi }}</span>
-                                                <span
-                                                    class="badge bg-warning text-dark">{{ $nilai->penilaian_materi }}</span>
-                                                <span class="badge bg-danger">{{ $nilai->penilaian_diskusi }}</span>
-                                                <button class="badge btn-info btn-sm" type="button" data-bs-toggle="modal"
-                                                    data-bs-target="#deskripsiModal{{ $nilai->id }}">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </button>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <span class="badge bg-secondary">Belum Dinilai</span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if ($k->status == 'Pending')
-                                        <button type="button" class="btn btn-success btn-sm" title="Setujui"
-                                            onclick="approveKelompok('{{ route('admin.approve', $k->id) }}')">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm" title="Tolak"
-                                            onclick="rejectKelompok('{{ route('admin.reject', $k->id) }}')">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    @elseif ($k->status == 'Diterima' && !$k->selesai)
-                                        @if (!$k->jadwal_lab_opened)
-                                            <button type="button" class="btn btn-info btn-sm" title="Buka Akses Jadwal"
-                                                onclick="openJadwalLab('{{ route('admin.openJadwalLab', $k->id) }}')">
-                                                <i class="fas fa-clock"></i>
-                                            </button>
-                                        @endif
-                                        <button class="btn btn-primary btn-sm" title="Nilai" data-bs-toggle="modal"
-                                            data-bs-target="#penilaianModal" data-id="{{ $k->id }}"
-                                            data-nama="{{ $k->judul_proyek }}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-warning btn-sm" title="Tandai Selesai"
-                                            onclick="selesaiKelompok('{{ route('admin.selesai', $k->id) }}')">
-                                            <i class="fas fa-flag"></i>
-                                        </button>
-                                    @endif
-                                    <button type="button" class="btn btn-danger btn-sm" title="Hapus"
-                                        onclick="hapusKelompok('{{ route('admin.destroy', $k->id) }}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
+                                </td> --}}
+        {{-- Add this in the table where jadwal is displayed --}}
+
+        {{-- status --}}
+        <td class="text-center">
+            @if ($k->status == 'Pending')
+                <span class="badge bg-warning text-dark">Pending</span>
+            @elseif($k->status == 'Diterima')
+                <span class="badge bg-success">Diterima</span>
+            @elseif($k->status == 'Ditolak')
+                <span class="badge bg-danger">Ditolak</span>
+            @endif
+        </td>
+        {{-- nilai --}}
+        <td class="text-center">
+            @if ($k->nilais->isNotEmpty())
+                @foreach ($k->nilais as $nilai)
+                    <div>
+                        <strong class="text-white">{{ $nilai->nama_penilai }}</strong><br>
+                        <span class="badge bg-success">{{ $nilai->penilaian_presentasi }}</span>
+                        <span class="badge bg-warning text-dark">{{ $nilai->penilaian_materi }}</span>
+                        <span class="badge bg-danger">{{ $nilai->penilaian_diskusi }}</span>
+                        <button class="badge btn-info btn-sm" type="button" data-bs-toggle="modal"
+                            data-bs-target="#deskripsiModal{{ $nilai->id }}">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+
+                    <!-- Modal untuk catatan -->
+                    <div class="modal fade" id="deskripsiModal{{ $nilai->id }}" tabindex="-1"
+                        aria-labelledby="deskripsiModalLabel{{ $nilai->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-dark text-white">
+                                <div class="modal-header border-bottom border-secondary">
+                                    <h5 class="modal-title" id="deskripsiModalLabel{{ $nilai->id }}">
+                                        Catatan Penilaian - {{ $nilai->nama_penilai }}
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="mb-0">{{ $nilai->catatan ?? 'Tidak ada catatan' }}
+                                    </p>
+                                </div>
+                                <div class="modal-footer border-top border-secondary">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <span class="badge bg-secondary">Belum Dinilai</span>
+            @endif
+        </td>
+        {{-- aksi --}}
+        <td class="text-center">
+            @if ($k->status == 'Pending')
+                <button type="button" class="btn btn-success btn-sm" title="Setujui"
+                    onclick="approveKelompok('{{ route('admin.approve', $k->id) }}', {{ $k->mode }})">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" title="Tolak"
+                    onclick="rejectKelompok('{{ route('admin.reject', $k->id) }}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            @elseif ($k->status == 'Diterima' && !$k->selesai)
+                <button class="btn btn-primary btn-sm" title="Nilai" data-bs-toggle="modal"
+                    data-bs-target="#penilaianModal" data-id="{{ $k->id }}" data-nama="{{ $k->judul_proyek }}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" title="Tandai Selesai"
+                    onclick="selesaiKelompok('{{ route('admin.selesai', $k->id) }}')">
+                    <i class="fas fa-flag"></i>
+                </button>
+            @endif
+            <button type="button" class="btn btn-danger btn-sm" title="Hapus"
+                onclick="hapusKelompok('{{ route('admin.destroy', $k->id) }}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+        </tr>
+        @endforeach
+        @endif
+        </tbody>
+        </table>
+    </div>
     </div>
 
     <!-- Modal Penilaian -->
@@ -215,11 +279,105 @@
         </div>
     </div>
 
+    {{-- App/Reject Update Jadwal --}}
     <script>
-        function approveKelompok(url) {
+        function approveJadwalChange(url, isOnline) {
+            if (isOnline) {
+                Swal.fire({
+                    title: 'Masukkan Link Google Meet',
+                    input: 'text',
+                    inputLabel: 'Link untuk presentasi online',
+                    inputPlaceholder: 'https://meet.google.com/...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Setujui',
+                    cancelButtonText: 'Batal',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Link Google Meet harus diisi!';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        submitJadwalApproval(url, result.value);
+                    }
+                });
+            } else {
+                submitJadwalApproval(url);
+            }
+        }
+
+        function submitJadwalApproval(url, link = null) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'PUT';
+            form.appendChild(methodInput);
+
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            if (link) {
+                const linkInput = document.createElement('input');
+                linkInput.type = 'hidden';
+                linkInput.name = 'link';
+                linkInput.value = link;
+                form.appendChild(linkInput);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function rejectJadwalChange(url) {
             Swal.fire({
-                title: 'Setujui Pengajuan?',
-                text: "Anda yakin ingin menyetujui pengajuan ini?",
+                title: 'Tolak Perubahan Jadwal?',
+                text: "Anda yakin ingin menolak perubahan jadwal ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Tolak!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = url;
+
+                    // Add method spoofing for PUT
+                    const methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'PUT';
+
+                    // Add CSRF token
+                    const csrfField = document.createElement('input');
+                    csrfField.type = 'hidden';
+                    csrfField.name = '_token';
+                    csrfField.value = '{{ csrf_token() }}';
+
+                    form.appendChild(methodField);
+                    form.appendChild(csrfField);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
+    {{--  --}}
+    {{-- <script>
+        function approveJadwalChange(url) {
+            Swal.fire({
+                title: 'Setujui Perubahan Jadwal?',
+                text: "Anda yakin ingin menyetujui perubahan jadwal ini?",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
@@ -228,31 +386,111 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Buat form untuk submit
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = url;
 
-                    // Tambah CSRF token
-                    const csrfToken = document.createElement('input');
-                    csrfToken.type = 'hidden';
-                    csrfToken.name = '_token';
-                    csrfToken.value = '{{ csrf_token() }}';
-                    form.appendChild(csrfToken);
+                    const csrf = document.createElement('input');
+                    csrf.type = 'hidden';
+                    csrf.name = '_token';
+                    csrf.value = '{{ csrf_token() }}';
+                    form.appendChild(csrf);
 
-                    // Tambah method PUT
-                    const methodField = document.createElement('input');
-                    methodField.type = 'hidden';
-                    methodField.name = '_method';
-                    methodField.value = 'PUT';
-                    form.appendChild(methodField);
-
-                    // Tambah form ke body dan submit
                     document.body.appendChild(form);
                     form.submit();
                 }
             });
         }
+
+        function rejectJadwalChange(url) {
+            Swal.fire({
+                title: 'Tolak Perubahan Jadwal?',
+                text: "Anda yakin ingin menolak perubahan jadwal ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Tolak!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = url;
+
+                    const csrf = document.createElement('input');
+                    csrf.type = 'hidden';
+                    csrf.name = '_token';
+                    csrf.value = '{{ csrf_token() }}';
+                    form.appendChild(csrf);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script> --}}
+    {{--  --}}
+    <script>
+        function approveKelompok(url, isOnline) {
+            if (isOnline) {
+                // For online mode, ask for GMeet link first
+                Swal.fire({
+                    title: 'Masukkan Link Google Meet',
+                    input: 'text',
+                    inputLabel: 'Link untuk presentasi online',
+                    inputPlaceholder: 'https://meet.google.com/...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Setujui',
+                    cancelButtonText: 'Batal',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Link Google Meet harus diisi!';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        submitApproval(url, result.value);
+                    }
+                });
+            } else {
+                // For offline mode, proceed directly
+                submitApproval(url);
+            }
+        }
+
+        function submitApproval(url, link = null) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+
+            // CSRF token
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            // Method spoofing
+            const method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'PUT';
+            form.appendChild(method);
+
+            // Add link if provided
+            if (link) {
+                const linkInput = document.createElement('input');
+                linkInput.type = 'hidden';
+                linkInput.name = 'link';
+                linkInput.value = link;
+                form.appendChild(linkInput);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
 
         function rejectKelompok(url) {
             Swal.fire({
