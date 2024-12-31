@@ -39,7 +39,6 @@ Sistem manajemen presentasi yang dirancang khusus untuk memudahkan proses pengaj
 - 💻 Laravel 11
 - 🎨 Bootstrap 5
 - 🔥 GSAP Animation
-- 📱 Responsive Design
 - 🗄️ MySQL Database
 
 ## 📝 Penggunaan
